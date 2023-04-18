@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'app/poker/presentation/bloc/play/play_bloc.dart';
 import 'core/services/app_router/app_router.dart';
 
 import 'injection_container.dart' as di;
@@ -30,6 +31,7 @@ void main() async {
           BlocProvider(create: (_) => di.sl<IpCubit>()),
           BlocProvider(create: (_) => di.sl<UserProfileBloc>()),
           BlocProvider(create: (_) => di.sl<RoomBloc>()),
+          BlocProvider(create: (_) => di.sl<PlayBloc>())
         ],
         child: const MyApp())
   );

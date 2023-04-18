@@ -3,13 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../config/app_colors.dart';
 import '../../../../../config/app_paths.dart';
 import '../../../../core/presentation/widget/rounded_shadow_box.dart';
+import '../../../domain/entities/card.dart';
 
-enum TypeCard {
-  carreaux,
-  coueurs,
-  piques,
-  trefles
-}
 class PlayingCard extends StatelessWidget {
   const PlayingCard({
     Key? key,

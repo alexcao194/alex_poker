@@ -16,7 +16,7 @@ abstract class RealtimeData {
 }
 
 class RealtimeDataImpl extends RealtimeData {
-  StreamController<PokerMessage> streamController = StreamController();
+  StreamController<PokerMessage> streamController = StreamController<PokerMessage>.broadcast();
   Stream<PokerMessage>? streamFromSocket;
   @override
   Stream<PokerMessage> connect({required String ip, required String token}) {

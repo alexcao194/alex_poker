@@ -1,5 +1,6 @@
 import 'package:alex_poker/app/poker/domain/entities/card.dart';
-import 'package:alex_poker/app/poker/presentation/screens/widgets/player.dart';
+
+import 'player.dart';
 
 enum SeatAction {
   fold,

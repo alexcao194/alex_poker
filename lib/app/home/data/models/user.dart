@@ -7,7 +7,7 @@ class UserModel extends User {
     return UserModel(
         email: json['email'],
         username: json['name'],
-        chipAmount: json['chipAmount']
+        chipAmount: json['chipsAmount']
     );
   }
 

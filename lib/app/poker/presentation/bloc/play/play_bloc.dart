@@ -21,6 +21,9 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     required this.connect
 }) : super(PlayInitial()) {
     on<PlayEventConnect>(_onConnect);
+    on<PlayEventLeave>(_onLeave);
+    on<PlayEventSendData>(_onSend);
+    on<PlayEventSendError>(_onSendError);
   }
 
   FutureOr<void> _onConnect(PlayEventConnect event, Emitter<PlayState> emit) {
@@ -30,13 +33,25 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
         // ignore: missing_enum_constant_in_switch
         switch(event.pokerAction) {
           case PokerAction.roomJoined:
+            add(PlayEventSendData(data: event.data));
             AppRouter.push(AppRoutes.play);
-            emit(PlayStatePlaying(room: event.data));
             break;
         }
       });
     } else {
       connect.call();
     }
+  }
+
+  FutureOr<void> _onLeave(PlayEventLeave event, Emitter<PlayState> emit) {
+    leaveRoom.call(event.id);
+  }
+
+  FutureOr<void> _onSendError(PlayEventSendError event, Emitter<PlayState> emit) {
+
+  }
+
+  FutureOr<void> _onSend(PlayEventSendData event, Emitter<PlayState> emit) {
+    emit(PlayStatePlaying(room: event.data));
   }
 }

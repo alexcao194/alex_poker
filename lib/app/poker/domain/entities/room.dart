@@ -12,7 +12,7 @@ class Room {
   final int bigBlind;
   final int type;
   final List<Player> players;
-  final List<Seat> seats;
+  final Map<int ,Seat?> seats;
   final List<Card> board;
   final Object deck;
   final Object button;
@@ -46,11 +46,17 @@ class Room {
     this.mainPot = 0,
     this.pot = 0,
     this.players = const [],
-    this.seats = const [],
+    this.seats = const {
+      1 : null,
+      2 : null,
+      3 : null,
+      4 : null,
+      5 : null
+    },
     this.turn = const Object(),
     this.sidePots = const [],
     this.winMessage = const [],
     this.minBet = 0,
     this.minRaise = 0
-  });
+  }) : assert(seats.length == 5);
 }

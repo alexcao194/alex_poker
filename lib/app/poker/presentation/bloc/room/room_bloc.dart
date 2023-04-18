@@ -54,9 +54,6 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
           case PokerAction.receiveLobbyInfo:
             add(RoomEventSendData(data: event.data));
             break;
-          case PokerAction.roomJoined:
-            AppRouter.push(AppRoutes.play);
-            break;
           case PokerAction.roomLeft:
             add(RoomEventSendData(data: event.data));
             break;

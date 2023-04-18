@@ -1,4 +1,5 @@
 import 'package:alex_poker/app/core/presentation/widget/custom_app_bar.dart';
+import 'package:alex_poker/app/poker/presentation/bloc/play/play_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -92,6 +93,7 @@ class HomeScreen extends StatelessWidget {
 
   void _startPoker(BuildContext context) {
     BlocProvider.of<RoomBloc>(context).add(RoomEventConnect());
+    BlocProvider.of<PlayBloc>(context).add(PlayEventConnect());
   }
 }
 
