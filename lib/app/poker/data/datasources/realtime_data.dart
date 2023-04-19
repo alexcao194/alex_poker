@@ -13,7 +13,11 @@ abstract class RealtimeData {
   void fetchLobbyInfo(int type, String token);
   void joinRoom(String id);
   void leaveRoom(String id);
-  void sitDown(String tableId, int seatId, int amount);
+  void sitDown(String roomId, int seatId, int amount);
+  void fold(String roomId);
+  void check(String roomId);
+  void raise(String roomId, int amount);
+  void call(String roomId);
 }
 
 class RealtimeDataImpl extends RealtimeData {
@@ -108,6 +112,8 @@ class RealtimeDataImpl extends RealtimeData {
             // TODO: Handle this case.
             break;
           case PokerAction.roomUpdated:
+            var data = event.data['table'];
+            data['message'] = event.data['message'];
             streamController.sink.add(
               PokerMessage(
                   pokerAction: PokerAction.roomUpdated,
@@ -149,11 +155,40 @@ class RealtimeDataImpl extends RealtimeData {
   }
 
   @override
-  void sitDown(String tableId, int seatId, int amount) {
+  void sitDown(String roomId, int seatId, int amount) {
     PokerSocket.instance.emit(PokerAction.sitDown, {
-        "tableId" : tableId,
+        "tableId" : roomId,
         "seatId" : seatId,
         "amount" : amount
+    });
+  }
+
+  @override
+  void call(String roomId) {
+    PokerSocket.instance.emit(PokerAction.call, {
+      "tableId" : roomId,
+    });
+  }
+
+  @override
+  void check(String roomId) {
+    PokerSocket.instance.emit(PokerAction.check, {
+      "tableId" : roomId,
+    });
+  }
+
+  @override
+  void fold(String roomId) {
+    PokerSocket.instance.emit(PokerAction.fold, {
+      "tableId" : roomId,
+    });
+  }
+
+  @override
+  void raise(String roomId, int amount) {
+    PokerSocket.instance.emit(PokerAction.raise, {
+      "tableId" : roomId,
+      'amount' : amount
     });
   }
 }

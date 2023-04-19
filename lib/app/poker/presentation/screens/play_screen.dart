@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/app_fonts.dart';
 import '../../../../core/services/app_router/app_router.dart';
-import '../../../core/presentation/widget/rounded_box.dart';
+import '../../../core/presentation/widget/rounded_shadow_box.dart';
 import '../../domain/entities/card.dart';
 import '../bloc/play/play_bloc.dart';
 import 'widgets/play_button.dart';
@@ -31,8 +31,20 @@ class _PlayScreenState extends State<PlayScreen> {
   final List<bool> _distributed = [false, false, false, false, false, false, false, false, false, false];
   final int _distributedDelay = 50;
   final _playerCount = 5;
+  int _maxBet = 0;
+  late final List<String> _messages = [];
   final double _offsetPlayer = 30;
+  bool _isEnd = true;
   bool _display = false;
+  int _currentSeat = 0;
+  late ScrollController _scrollController;
+  final Map<int, Seat?> _appSeats = {
+    1 : null,
+    2 : null,
+    3 : null,
+    4 : null,
+    5 : null
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +54,10 @@ class _PlayScreenState extends State<PlayScreen> {
         return BlocBuilder<PlayBloc, PlayState>(
           builder: (context, playState) {
             if (playState is PlayStatePlaying) {
+              _getSeats(playState, userState as UserProfileStateGetSuccessful);
+              _newHand(playState);
+              _messageUpdate(playState);
+              _updateBet(playState);
               return WillPopScope(
                 onWillPop: () async {
                   AppNotification.showAlertDialog(
@@ -50,10 +66,7 @@ class _PlayScreenState extends State<PlayScreen> {
                         BlocProvider.of<PlayBloc>(context).add(PlayEventLeave(roomId: playState.room.id));
                         AppRouter.pop();
                       },
-                      onCancel: () {
-
-                      }
-                  );
+                      onCancel: () {});
                   return false;
                 },
                 child: Scaffold(
@@ -62,52 +75,74 @@ class _PlayScreenState extends State<PlayScreen> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
+                        if(_messages.isNotEmpty) Positioned(
+                          bottom: 8,
+                          left: 8,
+                          child: RoundedShadowBox(
+                            radius: 10.0,
+                            height: size.height * 0.1,
+                            width: size.width * 0.2,
+                            blurRadius: 5,
+                            spreadRadius: 0,
+                            color: AppColors.primaryBackground,
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              itemCount: _messages.length,
+                              itemBuilder: (context, index) {
+                                return Text(_messages[index], style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                  color: AppColors.primaryWhite
+                                ));
+                              },
+                            ),
+                          ),
+                        ),
                         const PlayingBackground(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             PlayingCard(
-                              type: playState.room.board.isNotEmpty ? playState.room.board[0].type : TypeCard.carreaux,
-                              value: playState.room.board.isNotEmpty ? playState.room.board[0].value : "Hack cc",
-                              display: playState.room.board.isNotEmpty,
+                              suit: playState.room.board.isNotEmpty ? playState.room.board[0].suit : Suit.carreaux,
+                              rank: playState.room.board.isNotEmpty ? playState.room.board[0].rank : "Hack cc",
+                              display: _display && playState.room.board.isNotEmpty,
                             ),
                             PlayingCard(
-                              type: playState.room.board.length >= 2 ? playState.room.board[1].type : TypeCard.carreaux,
-                              value: playState.room.board.length >= 2 ? playState.room.board[1].value : "Hack cc",
-                              display: playState.room.board.length >= 2,
+                              suit: playState.room.board.length >= 2 ? playState.room.board[1].suit : Suit.carreaux,
+                              rank: playState.room.board.length >= 2 ? playState.room.board[1].rank : "Hack cc",
+                              display: _display && playState.room.board.length >= 2,
                               isSet: true,
                             ),
                             PlayingCard(
-                              type: playState.room.board.length >= 3 ? playState.room.board[2].type : TypeCard.carreaux,
-                              value: playState.room.board.length >= 3 ? playState.room.board[2].value : "Hack cc",
-                              display: playState.room.board.length >= 3,
+                              suit: playState.room.board.length >= 3 ? playState.room.board[2].suit : Suit.carreaux,
+                              rank: playState.room.board.length >= 3 ? playState.room.board[2].rank : "Hack cc",
+                              display: _display && playState.room.board.length >= 3,
                             ),
                             PlayingCard(
-                              type: playState.room.board.length >= 4 ? playState.room.board[3].type : TypeCard.carreaux,
-                              value: playState.room.board.length >= 4 ? playState.room.board[3].value : "Hack cc",
-                              display: playState.room.board.length >= 4,
+                              suit: playState.room.board.length >= 4 ? playState.room.board[3].suit : Suit.carreaux,
+                              rank: playState.room.board.length >= 4 ? playState.room.board[3].rank : "Hack cc",
+                              display: _display && playState.room.board.length >= 4,
                             ),
                             PlayingCard(
-                              type: playState.room.board.length >= 5 ? playState.room.board[4].type : TypeCard.carreaux,
-                              value: playState.room.board.length >= 5 ? playState.room.board[4].value : "Hack cc",
-                              display: playState.room.board.length >= 5,
+                              suit: playState.room.board.length >= 5 ? playState.room.board[4].suit : Suit.carreaux,
+                              rank: playState.room.board.length >= 5 ? playState.room.board[4].rank : "Hack cc",
+                              display: _display && playState.room.board.length >= 5,
                             ),
                           ],
                         ),
                         const Positioned(top: 8, right: 8, child: UserCard()),
+
                         AnimatedPositioned(
                           bottom: _distributed[0] ? size.height * 0.1 + _offsetPlayer : size.height * 0.5,
                           left: _distributed[0] ? size.width * 0.5 : size.width * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
-                          child: PlayingCard(value: '10', type: TypeCard.coueurs, display: _distributed[0], isSet: true),
+                          child: buildCard(0, _appSeats[1], 0)
                         ),
                         AnimatedPositioned(
                           bottom: _distributed[1] ? size.height * 0.1 + _offsetPlayer : size.height * 0.5,
                           left: _distributed[1] ? size.width * 0.5 - 54 : size.width * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
-                          child: PlayingCard(value: 'Q', type: TypeCard.coueurs, display: _distributed[1]),
+                          child: buildCard(1, _appSeats[1], 1)
                         ),
                         AnimatedPositioned(
                           left: _distributed[2] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
@@ -117,7 +152,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           child: AnimatedRotation(
                             duration: _distributeDuration,
                             turns: _distributed[2] ? 0.25 : 0,
-                            child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[2]),
+                            child: buildCard(0, _appSeats[5], 2)
                           ),
                         ),
                         AnimatedPositioned(
@@ -126,45 +161,54 @@ class _PlayScreenState extends State<PlayScreen> {
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
-                              turns: _distributed[3] ? 0.25 : 0, duration: _distributeDuration, child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[3])),
+                            turns: _distributed[3] ? 0.25 : 0,
+                            duration: _distributeDuration,
+                            child: buildCard(1, _appSeats[5], 3)
+                          ),
                         ),
                         AnimatedPositioned(
-                          left: _distributed[4] ? size.width * 0.5 - size.height * 0.5 : size.width * 0.5,
+                          left: _distributed[4] ? size.width * 0.5 - size.height * 0.5 + 70 : size.width * 0.5,
                           top: _distributed[4] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
                             duration: _distributeDuration,
                             turns: _distributed[4] ? 0.5 : 0,
-                            child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[4]),
+                            child: buildCard(0, _appSeats[4], 4)
                           ),
                         ),
                         AnimatedPositioned(
-                          left: _distributed[5] ? size.width * 0.5 - size.height * 0.5 + 52 : size.width * 0.5,
+                          left: _distributed[5] ? size.width * 0.5 - size.height * 0.5 + 120 : size.width * 0.5,
                           top: _distributed[5] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
-                              turns: _distributed[5] ? 0.5 : 0, duration: _distributeDuration, child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[5])),
+                            turns: _distributed[5] ? 0.5 : 0,
+                            duration: _distributeDuration,
+                            child: buildCard(1, _appSeats[4], 5)
+                          ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[6] ? size.width * 0.5 - size.height * 0.5 + 3 : size.width * 0.5,
+                          right: _distributed[6] ? size.width * 0.5 - size.height * 0.5 + 62 : size.width * 0.5,
                           top: _distributed[6] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
                             duration: _distributeDuration,
                             turns: _distributed[6] ? 0.5 : 0,
-                            child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[6]),
+                            child: buildCard(0, _appSeats[3], 6)
                           ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[7] ? size.width * 0.5 - size.height * 0.5 + 55 : size.width * 0.5,
+                          right: _distributed[7] ? size.width * 0.5 - size.height * 0.5 + 112 : size.width * 0.5,
                           top: _distributed[7] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
-                              turns: _distributed[7] ? 0.5 : 0, duration: _distributeDuration, child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[7])),
+                            turns: _distributed[7] ? 0.5 : 0,
+                            duration: _distributeDuration,
+                            child: buildCard(1, _appSeats[3], 7)
+                          ),
                         ),
                         AnimatedPositioned(
                           right: _distributed[8] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
@@ -174,7 +218,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           child: AnimatedRotation(
                             duration: _distributeDuration,
                             turns: _distributed[8] ? 0.75 : 0,
-                            child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[8]),
+                            child: buildCard(0, _appSeats[2], 8)
                           ),
                         ),
                         AnimatedPositioned(
@@ -183,11 +227,14 @@ class _PlayScreenState extends State<PlayScreen> {
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
-                              turns: _distributed[9] ? 0.75 : 0, duration: _distributeDuration, child: PlayingCard(value: 'hack cc', type: TypeCard.coueurs, active: false, display: _distributed[9])),
+                            turns: _distributed[9] ? 0.75 : 0,
+                            duration: _distributeDuration,
+                            child: buildCard(1, _appSeats[2], 9)
+                          ),
                         ),
                         Positioned(
                           bottom: size.height * 0.1 - _offsetPlayer,
-                          child: buildPlayer(playState, userState as UserProfileStateGetSuccessful, 1),
+                          child: buildPlayer(playState, userState, 1),
                         ),
                         Positioned(
                           top: size.height * 0.1 - _offsetPlayer,
@@ -200,15 +247,15 @@ class _PlayScreenState extends State<PlayScreen> {
                           child: buildPlayer(playState, userState, 3),
                         ),
                         Positioned(
-                          right: size.width * 0.5 - size.height * 0.8 - _offsetPlayer,
+                          left: size.width * 0.8 + _offsetPlayer,
                           child: buildPlayer(playState, userState, 2),
                         ),
                         Positioned(
-                          left: size.width * 0.5 - size.height * 0.8 - _offsetPlayer,
+                          right: size.width * 0.8 + _offsetPlayer,
                           child: buildPlayer(playState, userState, 5),
                         ),
-                        AnimatedPositioned(
-                            top: size.height * 0.32,
+                        if(!playState.room.handOver) AnimatedPositioned(
+                            top: size.height * 0.30,
                             duration: _distributeDuration,
                             child: Row(
                               children: [
@@ -218,20 +265,26 @@ class _PlayScreenState extends State<PlayScreen> {
                                   height: 25,
                                 ),
                                 const SizedBox(width: 8.0),
-                                Text('1.45M', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.primaryWhite, fontFamily: AppFonts.superBoom))
+                                Text(playState.room.pot.toString(), style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.primaryWhite, fontFamily: AppFonts.superBoom))
                               ],
                             )),
                         const Positioned(top: 8, left: 8, child: DropMenu()),
-                        Positioned(
+                        if(_appSeats[1] != null && _appSeats[1]!.turn) Positioned(
                           right: 8,
                           bottom: 8,
                           child: Column(
                             children: [
                               Row(
-                                children: const [PlayButton(playActions: PlayActions.bet), PlayButton(playActions: PlayActions.foldIfRaise, active: true)],
+                                children: [
+                                  PlayButton(playActions: PlayActions.raise, active: (_appSeats[1]!.bet < _appSeats[1]!.stack)),
+                                  PlayButton(playActions: PlayActions.check, active: (_maxBet == _appSeats[1]!.bet))
+                                ],
                               ),
                               Row(
-                                children: const [PlayButton(playActions: PlayActions.call), PlayButton(playActions: PlayActions.fold)],
+                                children: [
+                                  PlayButton(playActions: PlayActions.call, active: (_maxBet > _appSeats[1]!.bet)),
+                                  PlayButton(playActions: PlayActions.fold, active: (_maxBet > _appSeats[1]!.bet))
+                                ],
                               )
                             ],
                           ),
@@ -252,42 +305,45 @@ class _PlayScreenState extends State<PlayScreen> {
     );
   }
 
+  void _getSeats(PlayStatePlaying playState, UserProfileStateGetSuccessful userState) {
+    Map<int, Seat?> seats = playState.room.seats;
+    for (int i = 1; i <= 5; i++) {
+      if (seats[i] != null && seats[i]!.player.name == userState.user.username) {
+        _currentSeat = i;
+      }
+    }
+    _appSeats[1] = seats[_currentSeat];
+    _appSeats[2] = seats[(_currentSeat % 5) + 1];
+    _appSeats[3] = seats[((_currentSeat + 1) % 5) + 1];
+    _appSeats[4] = seats[((_currentSeat + 2) % 5) + 1];
+    _appSeats[5] = seats[((_currentSeat + 3) % 5) + 1];
+  }
+
   Widget buildPlayer(PlayStatePlaying playState, UserProfileStateGetSuccessful userState, int index) {
     bool isSitting = false;
-    var currentSeatId = -1;
     Map<int, Seat?> seats = playState.room.seats;
     for (int i = 1; i <= 5; i++) {
       if (seats[i] != null && seats[i]!.player.name == userState.user.username) {
         isSitting = true;
-        currentSeatId = i;
+        _currentSeat = i;
       }
     }
+    LabelOriented labelOriented = index >= 4 ? LabelOriented.left : LabelOriented.right;
     if (isSitting) {
-      switch (index) {
-        case 1:
-          return Player(isActive: seats[currentSeatId]!.turn);
-        case 2:
-          Seat? seat = seats[(currentSeatId % 5) + 1];
-          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
-        case 3:
-          Seat? seat = seats[((currentSeatId + 1) % 5) + 1];
-          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
-        case 4:
-          Seat? seat = seats[((currentSeatId + 2) % 5) + 1];
-          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
-        case 5:
-          Seat? seat = seats[((currentSeatId + 3) % 5) + 1];
-          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
+      if(index == 1) {
+        return Player(isActive: _appSeats[1]!.turn, name: userState.user.username, pot: _appSeats[1]!.stack, oriented: labelOriented, bet: _appSeats[1]!.bet);
+      } else {
+        return _appSeats[index] != null ? Player(isActive: _appSeats[index]!.turn, name: _appSeats[index]!.player.name, pot: _appSeats[index]!.stack, oriented: labelOriented, bet: _appSeats[index]!.bet) : const SizedBox();
       }
     } else {
-      print(seats[index]);
-      return seats[index] != null ? Player(isActive: seats[index]!.turn) : SitDownButton(
-        seatId: index,
-        amount: 10000,
-        roomId: playState.room.id,
-      );
+      return playState.room.seats[index] != null
+          ? Player(isActive: playState.room.seats[index]!.turn, name: playState.room.seats[index]!.player.name, pot: playState.room.seats[index]!.stack, oriented: labelOriented, bet: playState.room.seats[index]!.bet)
+          : SitDownButton(
+              seatId: index,
+              amount: 10000,
+              roomId: playState.room.id,
+            );
     }
-    return const Player(isActive: true);
   }
 
   @override
@@ -296,12 +352,14 @@ class _PlayScreenState extends State<PlayScreen> {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
+    _scrollController = ScrollController();
     super.initState();
   }
 
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -320,12 +378,92 @@ class _PlayScreenState extends State<PlayScreen> {
           );
         }
         await Future.delayed(Duration(milliseconds: _playerCount * 2 * _distributedDelay), () {
-          setState(() {
-            _display = true;
-          });
+          if(mounted) {
+            setState(() {
+              _display = true;
+            });
+          }
         });
       },
     );
   }
-}
 
+  void _pull() async {
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+      () async {
+        for (int i = 0; i < _playerCount * 2; i++) {
+          await Future.delayed(
+            Duration(milliseconds: _distributedDelay),
+            () {
+              if (mounted) {
+                setState(() {
+                  _distributed[i] = false;
+                });
+              }
+            },
+          );
+        }
+        await Future.delayed(Duration(milliseconds: _playerCount * 2 * _distributedDelay), () {
+          if(mounted) {
+            setState(() {
+              _display = false;
+            });
+          }
+        });
+      },
+    );
+  }
+
+  Widget buildCard(int pos, Seat? seat, int index) {
+    if(seat != null && seat.hand.isNotEmpty) {
+      return PlayingCard(
+          rank: seat.hand[pos].rank,
+          suit: seat.hand[pos].suit,
+          display: _distributed[index],
+      );
+    } else if(seat != null) {
+      return PlayingCard(
+          rank: 'Hack cc',
+          suit: Suit.trefles,
+          active: false,
+          display: _distributed[index],
+      );
+    } else {
+      return const SizedBox();
+    }
+  }
+
+  void _newHand(PlayStatePlaying playState) {
+    if (playState.room.handOver == true) {
+      _isEnd = true;
+      _pull();
+    } else {
+      if (_isEnd) {
+        _isEnd = false;
+        _distribute();
+      }
+    }
+  }
+
+  void _messageUpdate(PlayStatePlaying playState) {
+    if(playState.room.message.isNotEmpty && (_messages.isEmpty || playState.room.message != _messages.last)) {
+      _messages.add(playState.room.message);
+      if(_scrollController.positions.isNotEmpty) {
+        _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent + (_scrollController.position.maxScrollExtent / _scrollController.positions.length),
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeOut);
+      }
+    }
+  }
+
+  void _updateBet(PlayStatePlaying playState) {
+    _maxBet = 0;
+    for(int i = 1; i <= 5; i++) {
+      if(playState.room.seats[i] != null && playState.room.seats[i]!.bet > _maxBet) {
+        _maxBet = playState.room.seats[i]!.bet;
+      }
+    }
+  }
+}

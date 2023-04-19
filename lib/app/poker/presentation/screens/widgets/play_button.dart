@@ -1,10 +1,14 @@
 import 'package:alex_poker/config/app_colors.dart';
+import 'package:alex_poker/core/services/app_router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttericon/entypo_icons.dart';
 
+import '../../bloc/play/play_bloc.dart';
+
 enum PlayActions {
-  foldIfRaise,
-  bet,
+  check,
+  raise,
   call,
   fold
 }
@@ -25,7 +29,7 @@ class PlayButton extends StatelessWidget {
     topRight: Radius.circular(5)
   );
 
-  final BorderRadius _betBorderRadius = const BorderRadius.only(
+  final BorderRadius _raiseBorderRadius = const BorderRadius.only(
       topRight:Radius.circular(15),
       bottomLeft: Radius.circular(15.0),
       topLeft: Radius.circular(30.0),
@@ -39,7 +43,7 @@ class PlayButton extends StatelessWidget {
     topLeft: Radius.circular(5)
   );
 
-  final BorderRadius _foldIfRaisedBorderRadius = const BorderRadius.only(
+  final BorderRadius _check = const BorderRadius.only(
       bottomRight:Radius.circular(15),
       topRight: Radius.circular(30.0),
       topLeft: Radius.circular(15),
@@ -60,9 +64,9 @@ class PlayButton extends StatelessWidget {
               borderRadius: _getBorderRadius()
           ),
           child: MaterialButton(
-            onPressed: () {
-
-            },
+            onPressed: (active == true) ? () {
+              _call();
+            } : null,
             padding: const EdgeInsets.all(2.0),
             child: Icon(
               _getIconData(),
@@ -76,11 +80,10 @@ class PlayButton extends StatelessWidget {
 
   _getBorderRadius() {
     switch(playActions) {
-
-      case PlayActions.foldIfRaise:
-        return _foldIfRaisedBorderRadius;
-      case PlayActions.bet:
-        return _betBorderRadius;
+      case PlayActions.check:
+        return _check;
+      case PlayActions.raise:
+        return _raiseBorderRadius;
       case PlayActions.call:
         return _callBorderRadius;
       case PlayActions.fold:
@@ -90,14 +93,32 @@ class PlayButton extends StatelessWidget {
 
   IconData _getIconData() {
     switch(playActions) {
-      case PlayActions.foldIfRaise:
-        return Icons.directions_run;
-      case PlayActions.bet:
+      case PlayActions.check:
+        return Icons.check;
+      case PlayActions.raise:
         return Icons.add;
       case PlayActions.call:
-        return Icons.check;
+        return Icons.add_call;
       case PlayActions.fold:
         return Entypo.cancel;
+    }
+  }
+
+  void _call() {
+    var roomId = (BlocProvider.of<PlayBloc>(AppRouter.context).state as PlayStatePlaying).room.id;
+    switch(playActions) {
+      case PlayActions.check:
+        BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventCheck(roomId: roomId));
+        break;
+      case PlayActions.raise:
+        BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventRaise(roomId: roomId, amount: 500));
+        break;
+      case PlayActions.call:
+        BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventCall(roomId: roomId));
+        break;
+      case PlayActions.fold:
+        BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventFold(roomId: roomId));
+        break;
     }
   }
 }

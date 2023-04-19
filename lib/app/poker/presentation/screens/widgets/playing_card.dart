@@ -8,15 +8,15 @@ import '../../../domain/entities/card.dart';
 class PlayingCard extends StatelessWidget {
   const PlayingCard({
     Key? key,
-    required this.value,
-    required this.type,
+    required this.rank,
+    required this.suit,
     this.display,
     this.active,
     this.isSet
   }) : super(key: key);
 
-  final String value;
-  final TypeCard type;
+  final String rank;
+  final Suit suit;
   final bool? display;
   final bool? active;
   final bool? isSet;
@@ -37,7 +37,7 @@ class PlayingCard extends StatelessWidget {
             Positioned(
               top: 1,
               left: 5,
-              child: Text(value,
+              child: Text(rank,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: AppColors.primaryWhite
                   )
@@ -46,7 +46,7 @@ class PlayingCard extends StatelessWidget {
             Positioned(
               bottom: 3,
               right: 5,
-              child: Image.asset(getType(type), height: 15, width: 15),
+              child: Image.asset(getType(suit), height: 15, width: 15),
             )
           ],
         ) : null,
@@ -57,15 +57,15 @@ class PlayingCard extends StatelessWidget {
     );
   }
 
-  String getType(TypeCard type) {
+  String getType(Suit type) {
     switch(type) {
-      case TypeCard.carreaux:
+      case Suit.carreaux:
         return AppPath.carreaux;
-      case TypeCard.coueurs:
+      case Suit.coueurs:
         return AppPath.coeurs;
-      case TypeCard.piques:
+      case Suit.piques:
         return AppPath.piques;
-      case TypeCard.trefles:
+      case Suit.trefles:
         return AppPath.trefles;
     }
   }

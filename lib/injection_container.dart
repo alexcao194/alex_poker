@@ -30,6 +30,11 @@ import 'app/poker/domain/usecases/disconnect.dart' as poker;
 import 'app/poker/domain/usecases/join_room.dart' as poker;
 import 'app/poker/domain/usecases/leave_room.dart' as poker;
 import 'app/poker/domain/usecases/sit_down.dart' as poker;
+import 'app/poker/domain/usecases/call.dart' as poker;
+import 'app/poker/domain/usecases/check.dart' as poker;
+import 'app/poker/domain/usecases/fold.dart' as poker;
+import 'app/poker/domain/usecases/raise.dart' as poker;
+
 import 'app/poker/domain/usecases/fetch_lobby_info.dart' as poker;
 import 'app/poker/presentation/bloc/room/room_bloc.dart' as poker;
 import 'app/poker/presentation/bloc/play/play_bloc.dart' as poker;
@@ -63,7 +68,11 @@ Future<void> init() async {
   sl.registerFactory(() => poker.PlayBloc(
     leaveRoom: sl(),
     connect: sl(),
-    sitDown: sl()
+    sitDown: sl(),
+    call: sl(),
+    check: sl(),
+    fold: sl(),
+    raise: sl()
   ));
 
   // Usecase
@@ -78,6 +87,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => poker.JoinRoom(repositories: sl()));
   sl.registerLazySingleton(() => poker.LeaveRoom(repositories: sl()));
   sl.registerLazySingleton(() => poker.SitDown(repositories: sl()));
+  sl.registerLazySingleton(() => poker.Call(repositories: sl()));
+  sl.registerLazySingleton(() => poker.Check(repositories: sl()));
+  sl.registerLazySingleton(() => poker.Fold(repositories: sl()));
+  sl.registerLazySingleton(() => poker.Raise(repositories: sl()));
 
 
 

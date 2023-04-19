@@ -20,9 +20,7 @@ class RoomModel extends Room {
     super.board,
     super.button,
     super.callAmount,
-    super.deck,
     super.handOver,
-    super.history,
     super.mainPot,
     super.minBet,
     super.minRaise,
@@ -31,7 +29,8 @@ class RoomModel extends Room {
     super.seats,
     super.sidePots,
     super.turn,
-    super.winMessage
+    super.winMessage,
+    super.message
   });
 
   factory RoomModel.fromJson(Map<String, dynamic> json) {
@@ -73,11 +72,9 @@ class RoomModel extends Room {
       bigBlind : json['bigBlind'],
       type : json['type'],
       board: board,
-      button: json['button'] ?? Object(),
-      callAmount: json['callAmount'] ?? Object(),
-      deck: json['deck'] ?? Object(),
+      button: json['button'] ?? 0,
+      callAmount: json['callAmount'] ?? 0,
       handOver: json['handOver'] ?? true,
-      history: [],
       mainPot: json['mainPot'] ?? 0,
       minBet: json['minBet'] ?? 0,
       minRaise: json['minRaise'] ?? 0,
@@ -85,8 +82,9 @@ class RoomModel extends Room {
       pot: json['pot'] ?? 0,
       seats: seats,
       sidePots: [],
-      turn: json['turn'] ?? Object(),
-      winMessage: []
+      turn: json['turn'] ?? 0,
+      winMessage: [],
+      message : json['message'] ?? ""
     );
   }
 

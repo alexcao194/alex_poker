@@ -14,18 +14,17 @@ class Room {
   final List<Player> players;
   final Map<int ,Seat?> seats;
   final List<Card> board;
-  final Object deck;
-  final Object button;
-  final Object turn;
+  final int button;
+  final int turn;
   final int pot;
   final int mainPot;
-  final Object callAmount;
+  final int callAmount;
   final int minBet;
   final int minRaise;
   final bool handOver;
   final List<String> winMessage;
   final List<Object> sidePots;
-  final List<Object> history;
+  final String message;
 
 
   Room({
@@ -38,11 +37,9 @@ class Room {
     required this.bigBlind,
     required this.type,
     this.board = const [],
-    this.button = const Object(),
-    this.callAmount = const Object(),
-    this.deck = const Object(),
+    this.button = 0,
+    this.callAmount = 0,
     this.handOver = true,
-    this.history = const [],
     this.mainPot = 0,
     this.pot = 0,
     this.players = const [],
@@ -53,10 +50,11 @@ class Room {
       4 : null,
       5 : null
     },
-    this.turn = const Object(),
+    this.turn = 0,
     this.sidePots = const [],
     this.winMessage = const [],
     this.minBet = 0,
-    this.minRaise = 0
+    this.minRaise = 0,
+    this.message = ''
   }) : assert(seats.length == 5);
 }

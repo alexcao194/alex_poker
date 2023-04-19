@@ -44,6 +44,37 @@ class PlayEventSitDown extends PlayEvent {
   final int amount;
 
   @override
-  // TODO: implement props
   List<Object?> get props => [amount, seatId, tableId];
+}
+
+class PlayEventCall extends PlayEvent {
+  const PlayEventCall({required this.roomId});
+  final String roomId;
+
+  @override
+  List<Object?> get props => [roomId];
+}
+
+class PlayEventCheck extends PlayEvent {
+  const PlayEventCheck({required this.roomId});
+  final String roomId;
+
+  @override
+  List<Object?> get props => [roomId];
+}
+
+class PlayEventFold extends PlayEvent {
+  const PlayEventFold({required this.roomId});
+  final String roomId;
+
+  @override
+  List<Object?> get props => [roomId];
+}
+
+class PlayEventRaise extends PlayEvent {
+  const PlayEventRaise({required this.roomId, required this.amount});
+  final String roomId;
+  final int amount;
+  @override
+  List<Object?> get props => [roomId];
 }

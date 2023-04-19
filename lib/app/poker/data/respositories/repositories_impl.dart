@@ -36,4 +36,24 @@ class RepositoriesImpl extends Repositories {
   void sitDown(String tableId, int seatId, int amount) {
     realtimeData.sitDown(tableId, seatId, amount);
   }
+
+  @override
+  void call(String roomId) {
+    realtimeData.call(roomId);
+  }
+
+  @override
+  void check(String roomId) {
+    realtimeData.check(roomId);
+  }
+
+  @override
+  void fold(String roomId) {
+    realtimeData.fold(roomId);
+  }
+
+  @override
+  void raise(String roomId, int amount) {
+    realtimeData.raise(roomId, amount);
+  }
 }

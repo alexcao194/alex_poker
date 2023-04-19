@@ -9,4 +9,8 @@ abstract class Repositories {
   void joinRoom(String id);
   void leaveRoom(String id);
   void sitDown(String tableId, int seatId, int amount);
+  void fold(String roomId);
+  void check(String roomId);
+  void call(String roomId);
+  void raise(String roomId, int amount);
 }
