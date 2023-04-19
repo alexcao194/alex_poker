@@ -8,4 +8,5 @@ abstract class Repositories {
   void fetchLobbyInfo(int type);
   void joinRoom(String id);
   void leaveRoom(String id);
+  void sitDown(String tableId, int seatId, int amount);
 }

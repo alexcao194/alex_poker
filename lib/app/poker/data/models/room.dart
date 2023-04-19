@@ -1,4 +1,11 @@
+import 'package:alex_poker/app/poker/data/models/card.dart';
+import 'package:alex_poker/app/poker/data/models/player.dart';
+import 'package:alex_poker/app/poker/data/models/seat.dart';
+import 'package:alex_poker/app/poker/domain/entities/player.dart';
 import 'package:alex_poker/app/poker/domain/entities/room.dart';
+import 'package:alex_poker/app/poker/domain/entities/seat.dart';
+
+import '../../domain/entities/card.dart';
 
 class RoomModel extends Room {
   RoomModel({
@@ -9,10 +16,53 @@ class RoomModel extends Room {
     required super.currentNumberPlayers,
     required super.smallBlind,
     required super.bigBlind,
-    required super.type
+    required super.type,
+    super.board,
+    super.button,
+    super.callAmount,
+    super.deck,
+    super.handOver,
+    super.history,
+    super.mainPot,
+    super.minBet,
+    super.minRaise,
+    super.players,
+    super.pot,
+    super.seats,
+    super.sidePots,
+    super.turn,
+    super.winMessage
   });
 
   factory RoomModel.fromJson(Map<String, dynamic> json) {
+    var seats = <int, Seat?>{
+      1 : null,
+      2 : null,
+      3 : null,
+      4 : null,
+      5 : null
+    };
+    var board = <Card>[];
+    var players = <Player>[];
+    if(json['players'] != null) {
+      for(var player in json['players']) {
+        if(player != null) {
+          players.add(PlayerModel.fromJson(player));
+        }
+      }
+    }
+    if(json['board'] != null) {
+      for (var card in json['board']) {
+        if (card != null) {
+          board.add(CardModel.fromJson(card));
+        }
+      }
+    }
+    if(json['seats'] != null) {
+      for (int i = 1; i <= 5; i++) {
+        seats[i] = json['seats'][i.toString()] != null ? SeatModel.fromJson(json['seats'][i.toString()]) : null;
+      }
+    }
     return RoomModel(
       id : json['id'],
       name : json['name'],
@@ -21,7 +71,22 @@ class RoomModel extends Room {
       currentNumberPlayers : json['currentNumberPlayers'],
       smallBlind : json['smallBlind'],
       bigBlind : json['bigBlind'],
-      type : json['type']
+      type : json['type'],
+      board: board,
+      button: json['button'] ?? Object(),
+      callAmount: json['callAmount'] ?? Object(),
+      deck: json['deck'] ?? Object(),
+      handOver: json['handOver'] ?? true,
+      history: [],
+      mainPot: json['mainPot'] ?? 0,
+      minBet: json['minBet'] ?? 0,
+      minRaise: json['minRaise'] ?? 0,
+      players: players,
+      pot: json['pot'] ?? 0,
+      seats: seats,
+      sidePots: [],
+      turn: json['turn'] ?? Object(),
+      winMessage: []
     );
   }
 

@@ -1,14 +1,12 @@
 import 'package:alex_poker/core/services/app_router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../config/app_colors.dart';
+import '../../../../../core/notification/notification.dart';
 import '../../../../core/presentation/widget/rounded_shadow_box.dart';
+import '../../bloc/play/play_bloc.dart';
 
-enum Actions {
-  standUp,
-  exitNow,
-  exit,
-  shitDown
-}
+enum Actions { standUp, exitNow, exit, shitDown }
 
 extension ActionsExtention on Actions {
   String get name {
@@ -52,15 +50,12 @@ class DropMenuState extends State<DropMenu> {
   final List<bool> _visible = [];
   final int _itemCount = 3;
   bool _standing = false;
-  final List<bool?> _state = [
-    null,
-    null,
-    false
-  ];
+  bool _appear = false;
+  final List<bool?> _state = [null, null, false];
 
   @override
   void initState() {
-    for(int i = 0; i < _itemCount; i++) {
+    for (int i = 0; i < _itemCount; i++) {
       _visible.add(false);
     }
     super.initState();
@@ -68,50 +63,56 @@ class DropMenuState extends State<DropMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RoundedShadowBox(
-          radius: 20,
-          height: 50,
-          width: 50,
-          shadowColor: (_visible[0] ? null : AppColors.primaryBackground),
-          child: MaterialButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              _changeState();
-            },
-            child: const Icon(Icons.menu, color: AppColors.primaryWhite),
+    return BlocBuilder<PlayBloc, PlayState>(
+      builder: (context, playState) {
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          height: _appear ? 300 : 50,
+          width: _appear ? 450 : 50,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RoundedShadowBox(
+                radius: 20,
+                height: 50,
+                width: 50,
+                shadowColor: (_visible[0] ? null : AppColors.primaryBackground),
+                child: MaterialButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    _changeState();
+                  },
+                  child: const Icon(Icons.menu, color: AppColors.primaryWhite),
+                ),
+              ),
+                if(_visible.first) SizedBox(
+                width: 200,
+                height: 400,
+                child: ListView.builder(
+                    itemCount: _itemCount,
+                    itemBuilder: (context, index) {
+                      return AnimatedOpacity(
+                        duration: _duration,
+                        opacity: _visible[index] ? 1 : 0,
+                        curve: Curves.easeOut,
+                        child: AnimatedAlign(
+                          duration: _duration,
+                          curve: Curves.easeOut,
+                          alignment: _visible[index] ? Alignment.centerLeft : Alignment.centerRight,
+                          child: dropItem(state: _state[index], action: Actions.values[index], roomId: (playState as PlayStatePlaying).room.id),
+                        ),
+                      );
+                    }),
+              )
+            ],
           ),
-        ),
-        SizedBox(
-          width: 200,
-          height: 400,
-          child: ListView.builder(
-              itemCount: _itemCount,
-              itemBuilder: (context, index) {
-                return AnimatedOpacity(
-                  duration: _duration,
-                  opacity: _visible[index] ? 1 : 0,
-                  curve: Curves.easeOut,
-                  child: AnimatedAlign(
-                    duration: _duration,
-                    curve: Curves.easeOut,
-                    alignment: _visible[index] ? Alignment.centerLeft : Alignment.centerRight,
-                    child: dropItem(
-                      state: _state[index],
-                      action: Actions.values[index]
-                    ),
-                  ),
-                );
-              }),
-        )
-      ],
+        );
+      },
     );
   }
 
-  dropItem({required bool? state, required Actions action}) {
-    if(action == Actions.standUp && _standing) action = Actions.shitDown;
+  dropItem({required bool? state, required Actions action, required String roomId}) {
+    if (action == Actions.standUp && _standing) action = Actions.shitDown;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0) + const EdgeInsets.only(left: 8.0),
       child: RoundedShadowBox(
@@ -123,7 +124,7 @@ class DropMenuState extends State<DropMenu> {
         child: MaterialButton(
           padding: EdgeInsets.zero,
           onPressed: () {
-            _onPress(action);
+            _onPress(action, roomId);
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -132,14 +133,11 @@ class DropMenuState extends State<DropMenu> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Icon(
-                    action.icon,
-                      color: (state == null || state) ? AppColors.primaryWhite : Colors.transparent),
+                  child: Icon(action.icon, color: (state == null || state) ? AppColors.primaryWhite : Colors.transparent),
                 ),
-                Text(action.name,
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: AppColors.primaryWhite
-                  ),
+                Text(
+                  action.name,
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.primaryWhite),
                 )
               ],
             ),
@@ -149,58 +147,41 @@ class DropMenuState extends State<DropMenu> {
     );
   }
 
-  void _changeState() async {
-    for(int i = 0; i < _itemCount; i++) {
-      await Future.delayed(
-          Duration(milliseconds: 200 * i)
-      ).then((value) {
-        if(mounted) {
-          setState(() {
-            _visible[i] = !_visible[i];
-          });
-        }
+  void _changeState() {
+    if(!_appear) {
+      setState(() {
+        _appear = true;
+      });
+      Future.delayed(const Duration(milliseconds: 200), () {
+        _appearDropItem();
+      });
+    } else {
+      _appearDropItem();
+      Future.delayed(Duration(milliseconds: 200 * _itemCount), () {
+        setState(() {
+          _appear = false;
+        });
       });
     }
   }
 
-  void _onPress(Actions action) {
+  void _onPress(Actions action, String roomId) {
     _changeState();
     int index = Actions.values.indexOf(action);
-    switch(action) {
+    switch (action) {
       case Actions.standUp:
         setState(() {
           _standing = true;
         });
         break;
       case Actions.exitNow:
-        showDialog(
-            context: AppRouter.navigatorKey.currentState!.context,
-            builder: (context) {
-              return AlertDialog(
-                backgroundColor: AppColors.primaryBackground,
-                content: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Exiting the table if you are placing a bet will lose your bet, are you sure you want to exit?',
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: AppColors.primaryWhite
-                    ),
-                  ),
-                ),
-                actions: [
-                  MaterialButton(
-                      onPressed: () {
-                        AppRouter.pop();
-                      },
-                      child: const Text('Cancel', style: TextStyle(color: AppColors.primaryWhite))),
-                  MaterialButton(
-                      onPressed: () async {
-                        AppRouter.pop();
-                        AppRouter.pop();
-                      },
-                      child: const Text('Ok', style: TextStyle(color: AppColors.primaryWhite)))
-                ],
-              );
-            });
+        AppNotification.showAlertDialog(
+            message: 'Exiting the table if you are placing a bet will lose your bet, are you sure you want to exit?',
+            onAccept: () {
+              BlocProvider.of<PlayBloc>(context).add(PlayEventLeave(roomId: roomId));
+              AppRouter.pop();
+            },
+            onCancel: () {});
         break;
       case Actions.exit:
         _state[index] = !_state[index]!;
@@ -210,6 +191,18 @@ class DropMenuState extends State<DropMenu> {
           _standing = false;
         });
         break;
+    }
+  }
+
+  void _appearDropItem() {
+    for (int i = 0; i < _itemCount; i++) {
+      Future.delayed(Duration(milliseconds: 200 * i)).then((value) {
+        if (mounted) {
+          setState(() {
+            _visible[i] = !_visible[i];
+          });
+        }
+      });
     }
   }
 }

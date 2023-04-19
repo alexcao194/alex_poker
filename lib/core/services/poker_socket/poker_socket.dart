@@ -10,7 +10,7 @@ enum PokerAction {
   fetchLobbyInfo,
   joinRoom,
   roomJoined,
-  roomUpdated,
+  roomsUpdated,
   leaveRoom,
   roomLeft,
   fold,
@@ -24,7 +24,8 @@ enum PokerAction {
   sittingOut,
   sittingIn,
   disconnect,
-  winner
+  winner,
+  roomUpdated
 }
 
 extension PokerActionExtension on PokerAction {
@@ -44,7 +45,7 @@ extension PokerActionExtension on PokerAction {
         return 'JOIN_TABLE';
       case PokerAction.roomJoined:
         return 'TABLE_JOINED';
-      case PokerAction.roomUpdated:
+      case PokerAction.roomsUpdated:
         return 'TABLES_UPDATED';
       case PokerAction.leaveRoom:
         return 'LEAVE_TABLE';
@@ -74,6 +75,8 @@ extension PokerActionExtension on PokerAction {
         return 'DISCONNECT';
       case PokerAction.winner:
         return 'WINNER';
+      case PokerAction.roomUpdated:
+        return "TABLE_UPDATED";
     }
   }
 }
@@ -137,12 +140,20 @@ class PokerSocket {
           )
       );
     });
-    _socket.on(PokerAction.roomUpdated.toSocketEvent, (data) {
+    _socket.on(PokerAction.roomsUpdated.toSocketEvent, (data) {
       _streamController.sink.add(
           PokerMessage(
               pokerAction: PokerAction.receiveLobbyInfo,
               data: data
           )
+      );
+    });
+    _socket.on(PokerAction.roomUpdated.toSocketEvent, (data) {
+      _streamController.sink.add(
+        PokerMessage(
+          pokerAction: PokerAction.roomUpdated,
+          data: data
+        )
       );
     });
   }

@@ -13,6 +13,7 @@ abstract class RealtimeData {
   void fetchLobbyInfo(int type, String token);
   void joinRoom(String id);
   void leaveRoom(String id);
+  void sitDown(String tableId, int seatId, int amount);
 }
 
 class RealtimeDataImpl extends RealtimeData {
@@ -25,6 +26,7 @@ class RealtimeDataImpl extends RealtimeData {
     if(streamFromSocket == null) {
       streamFromSocket = pokerSocket.stream;
       streamFromSocket!.listen((event) {
+        print(event.data);
         var action = event.pokerAction;
         switch (action) {
           case PokerAction.connected:
@@ -54,7 +56,6 @@ class RealtimeDataImpl extends RealtimeData {
           case PokerAction.joinRoom:
             break;
           case PokerAction.roomJoined:
-            print(event.data);
             streamController.sink.add(
                 PokerMessage(
                     pokerAction: action,
@@ -62,7 +63,7 @@ class RealtimeDataImpl extends RealtimeData {
                 )
             );
             break;
-          case PokerAction.roomUpdated:
+          case PokerAction.roomsUpdated:
             break;
           case PokerAction.leaveRoom:
             // TODO: Handle this case.
@@ -106,6 +107,14 @@ class RealtimeDataImpl extends RealtimeData {
           case PokerAction.winner:
             // TODO: Handle this case.
             break;
+          case PokerAction.roomUpdated:
+            streamController.sink.add(
+              PokerMessage(
+                  pokerAction: PokerAction.roomUpdated,
+                  data: RoomModel.fromJson(event.data['table'])
+              )
+            );
+            break;
         }
       });
     }
@@ -136,6 +145,15 @@ class RealtimeDataImpl extends RealtimeData {
   void leaveRoom(String id) {
     PokerSocket.instance.emit(PokerAction.leaveRoom, {
       "tableId" : id
+    });
+  }
+
+  @override
+  void sitDown(String tableId, int seatId, int amount) {
+    PokerSocket.instance.emit(PokerAction.sitDown, {
+        "tableId" : tableId,
+        "seatId" : seatId,
+        "amount" : amount
     });
   }
 }

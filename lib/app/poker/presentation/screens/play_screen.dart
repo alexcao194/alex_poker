@@ -2,6 +2,7 @@ import 'package:alex_poker/app/home/presentation/bloc/user_profile_bloc.dart';
 import 'package:alex_poker/app/poker/domain/entities/seat.dart';
 import 'package:alex_poker/config/app_colors.dart';
 import 'package:alex_poker/config/app_paths.dart';
+import 'package:alex_poker/core/notification/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,34 +44,16 @@ class _PlayScreenState extends State<PlayScreen> {
             if (playState is PlayStatePlaying) {
               return WillPopScope(
                 onWillPop: () async {
-                  showDialog(
-                      context: AppRouter.navigatorKey.currentState!.context,
-                      builder: (context) {
-                        return AlertDialog(
-                          backgroundColor: AppColors.primaryBackground,
-                          content: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Exiting the table if you are placing a bet will lose your bet, are you sure you want to exit?',
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.primaryWhite),
-                            ),
-                          ),
-                          actions: [
-                            MaterialButton(
-                                onPressed: () {
-                                  AppRouter.pop();
-                                },
-                                child: const Text('Cancel', style: TextStyle(color: AppColors.primaryWhite))),
-                            MaterialButton(
-                                onPressed: () async {
-                                  BlocProvider.of<PlayBloc>(context).add(PlayEventLeave(id: playState.room.id));
-                                  AppRouter.pop();
-                                  AppRouter.pop();
-                                },
-                                child: const Text('Ok', style: TextStyle(color: AppColors.primaryWhite)))
-                          ],
-                        );
-                      });
+                  AppNotification.showAlertDialog(
+                      message: 'Exiting the table if you are placing a bet will lose your bet, are you sure you want to exit?',
+                      onAccept: () {
+                        BlocProvider.of<PlayBloc>(context).add(PlayEventLeave(roomId: playState.room.id));
+                        AppRouter.pop();
+                      },
+                      onCancel: () {
+
+                      }
+                  );
                   return false;
                 },
                 child: Scaffold(
@@ -207,10 +190,6 @@ class _PlayScreenState extends State<PlayScreen> {
                           child: buildPlayer(playState, userState as UserProfileStateGetSuccessful, 1),
                         ),
                         Positioned(
-                          left: size.width * 0.5 - size.height * 0.8 - _offsetPlayer,
-                          child: buildPlayer(playState, userState, 5),
-                        ),
-                        Positioned(
                           top: size.height * 0.1 - _offsetPlayer,
                           left: size.width * 0.3,
                           child: buildPlayer(playState, userState, 4),
@@ -223,6 +202,10 @@ class _PlayScreenState extends State<PlayScreen> {
                         Positioned(
                           right: size.width * 0.5 - size.height * 0.8 - _offsetPlayer,
                           child: buildPlayer(playState, userState, 2),
+                        ),
+                        Positioned(
+                          left: size.width * 0.5 - size.height * 0.8 - _offsetPlayer,
+                          child: buildPlayer(playState, userState, 5),
                         ),
                         AnimatedPositioned(
                             top: size.height * 0.32,
@@ -239,14 +222,6 @@ class _PlayScreenState extends State<PlayScreen> {
                               ],
                             )),
                         const Positioned(top: 8, left: 8, child: DropMenu()),
-                        const Positioned(
-                          bottom: 8,
-                          left: 8,
-                          child: SizedBox(
-                            width: 150,
-                            child: Text('Thung pha sanh'),
-                          ),
-                        ),
                         Positioned(
                           right: 8,
                           bottom: 8,
@@ -292,20 +267,25 @@ class _PlayScreenState extends State<PlayScreen> {
         case 1:
           return Player(isActive: seats[currentSeatId]!.turn);
         case 2:
-          Seat? seat = seats[seats[(currentSeatId % 5) + 1]];
-          return seat != null ? Player(isActive: seat.turn) : const SitDownButton();
+          Seat? seat = seats[(currentSeatId % 5) + 1];
+          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
         case 3:
           Seat? seat = seats[((currentSeatId + 1) % 5) + 1];
-          return seat != null ? Player(isActive: seat.turn) : const SitDownButton();
+          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
         case 4:
           Seat? seat = seats[((currentSeatId + 2) % 5) + 1];
-          return seat != null ? Player(isActive: seat.turn) : const SitDownButton();
+          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
         case 5:
           Seat? seat = seats[((currentSeatId + 3) % 5) + 1];
-          return seat != null ? Player(isActive: seat.turn) : const SitDownButton();
+          return seat != null ? Player(isActive: seat.turn) : const SizedBox();
       }
     } else {
-      return seats[index] != null ? Player(isActive: seats[index]!.turn) : const SitDownButton();
+      print(seats[index]);
+      return seats[index] != null ? Player(isActive: seats[index]!.turn) : SitDownButton(
+        seatId: index,
+        amount: 10000,
+        roomId: playState.room.id,
+      );
     }
     return const Player(isActive: true);
   }

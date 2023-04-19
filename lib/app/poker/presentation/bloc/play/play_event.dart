@@ -31,8 +31,19 @@ class PlayEventJoin extends PlayEvent {
 }
 
 class PlayEventLeave extends PlayEvent {
-  const PlayEventLeave({required this.id});
-  final String id;
+  const PlayEventLeave({required this.roomId});
+  final String roomId;
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [roomId];
+}
+
+class PlayEventSitDown extends PlayEvent {
+  const PlayEventSitDown({required this.amount, required this.seatId, required this.tableId});
+  final int seatId;
+  final String tableId;
+  final int amount;
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [amount, seatId, tableId];
 }

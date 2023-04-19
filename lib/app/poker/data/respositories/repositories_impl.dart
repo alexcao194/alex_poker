@@ -31,4 +31,9 @@ class RepositoriesImpl extends Repositories {
   void leaveRoom(String id) {
     realtimeData.leaveRoom(id);
   }
+
+  @override
+  void sitDown(String tableId, int seatId, int amount) {
+    realtimeData.sitDown(tableId, seatId, amount);
+  }
 }

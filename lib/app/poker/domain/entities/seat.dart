@@ -24,7 +24,7 @@ class Seat {
     required this.lastAction,
     required this.sittingOut
   });
-  final String id;
+  final int id;
   final Player player;
   final int buyIn;
   final int stack;
@@ -33,6 +33,6 @@ class Seat {
   final bool turn;
   final bool checked;
   final bool folded;
-  final SeatAction lastAction;
+  final SeatAction? lastAction;
   final bool sittingOut;
 }
