@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../config/app_colors.dart';
-import '../services/app_router/app_router.dart';
+import '../../../config/app_colors.dart';
+import '../../services/app_router/app_router.dart';
 
 enum NotificationMode {
   warning,

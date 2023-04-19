@@ -1,11 +1,11 @@
 import 'package:alex_poker/app/core/presentation/widget/custom_app_bar.dart';
+import 'package:alex_poker/app/home/presentation/bloc/user_profile_bloc.dart';
 import 'package:alex_poker/app/poker/presentation/bloc/play/play_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/app_colors.dart';
 import '../../../../config/app_paths.dart';
-import '../../../../core/services/app_router/app_router.dart';
 import '../../../core/presentation/widget/appear_widget.dart';
 import '../../../core/presentation/widget/rounded_box.dart';
 import '../../../poker/presentation/bloc/room/room_bloc.dart';
@@ -18,9 +18,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    var chip = (BlocProvider.of<UserProfileBloc>(context).state as UserProfileStateGetSuccessful).user.chipAmount;
     return Scaffold(
       backgroundColor: AppColors.primary,
-      appBar: CustomAppBar(context: context),
+      appBar: CustomAppBar(context: context, chip: chip),
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(

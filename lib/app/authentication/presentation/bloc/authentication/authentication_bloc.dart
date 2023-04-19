@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:alex_poker/app/home/presentation/bloc/user_profile_bloc.dart';
-import 'package:alex_poker/core/notification/notification.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/services/app_router/app_router.dart';
+import '../../../../../core/services/notification/notification.dart';
 import '../../../domain/entities/account.dart';
 import '../../../domain/usecases/get_account.dart';
 import '../../../domain/usecases/login.dart';

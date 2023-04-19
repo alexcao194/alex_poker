@@ -2,12 +2,12 @@ import 'package:alex_poker/app/home/presentation/bloc/user_profile_bloc.dart';
 import 'package:alex_poker/app/poker/domain/entities/seat.dart';
 import 'package:alex_poker/config/app_colors.dart';
 import 'package:alex_poker/config/app_paths.dart';
-import 'package:alex_poker/core/notification/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/app_fonts.dart';
 import '../../../../core/services/app_router/app_router.dart';
+import '../../../../core/services/notification/notification.dart';
 import '../../../core/presentation/widget/rounded_shadow_box.dart';
 import '../../domain/entities/card.dart';
 import '../bloc/play/play_bloc.dart';
@@ -85,14 +85,17 @@ class _PlayScreenState extends State<PlayScreen> {
                             blurRadius: 5,
                             spreadRadius: 0,
                             color: AppColors.primaryBackground,
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              itemCount: _messages.length,
-                              itemBuilder: (context, index) {
-                                return Text(_messages[index], style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                                  color: AppColors.primaryWhite
-                                ));
-                              },
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: _messages.length,
+                                itemBuilder: (context, index) {
+                                  return Text(_messages[index], style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                    color: AppColors.primaryWhite
+                                  ));
+                                },
+                              ),
                             ),
                           ),
                         ),

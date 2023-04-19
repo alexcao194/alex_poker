@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:alex_poker/app/home/domain/entities/user.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../core/notification/notification.dart';
 import '../../../../core/services/app_router/app_router.dart';
+import '../../../../core/services/notification/notification.dart';
 import '../../domain/usecases/get_profile.dart';
 
 part 'user_profile_event.dart';

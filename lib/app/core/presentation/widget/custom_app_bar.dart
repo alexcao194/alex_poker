@@ -5,7 +5,12 @@ import '../../../../config/app_fonts.dart';
 import '../../../../config/app_paths.dart';
 
 class CustomAppBar extends AppBar {
-  CustomAppBar({super.key, required this.context}) : super(
+  final int chip;
+  CustomAppBar({
+    super.key,
+    required this.context,
+    required this.chip
+  }) : super(
     backgroundColor: Colors.transparent,
     leading: ClipRRect(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(35.0), bottomLeft: Radius.circular(15.0), bottomRight: Radius.circular(15.0), topRight: Radius.circular(15.0)),
@@ -21,7 +26,7 @@ class CustomAppBar extends AppBar {
       children: [
         SizedBox(height: 30.0, width: 30.0, child: Image.asset(AppPath.coin, fit: BoxFit.cover)),
         const SizedBox(width: 4.0),
-        Text('19042003', style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.subWhite, fontFamily: AppFonts.superBoom))
+        Text(chip.toString(), style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.subWhite, fontFamily: AppFonts.superBoom))
       ],
     ),
     actions: const [

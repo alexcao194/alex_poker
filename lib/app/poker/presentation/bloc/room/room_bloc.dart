@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:alex_poker/core/notification/notification.dart';
 import 'package:alex_poker/core/services/app_router/app_router.dart';
 import 'package:alex_poker/core/services/poker_socket/poker_socket.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../../core/services/notification/notification.dart';
 import '../../../domain/entities/room.dart';
 import '../../../domain/usecases/connect.dart';
 import '../../../domain/usecases/disconnect.dart';

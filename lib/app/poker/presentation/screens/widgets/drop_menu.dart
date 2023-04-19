@@ -2,7 +2,7 @@ import 'package:alex_poker/core/services/app_router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../config/app_colors.dart';
-import '../../../../../core/notification/notification.dart';
+import '../../../../../core/services/notification/notification.dart';
 import '../../../../core/presentation/widget/rounded_shadow_box.dart';
 import '../../bloc/play/play_bloc.dart';
 

@@ -9,6 +9,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../../../config/app_colors.dart';
 import '../../../../config/app_fonts.dart';
 import '../../../core/presentation/widget/custom_app_bar.dart';
+import '../../../home/presentation/bloc/user_profile_bloc.dart';
 import '../../domain/entities/room.dart';
 import '../bloc/room/room_bloc.dart';
 
@@ -53,12 +54,13 @@ class _PokerRoomState extends State<PokerRoom> {
       },
       child: BlocBuilder<RoomBloc, RoomState>(
         builder: (context, roomState) {
+          var chip = (BlocProvider.of<UserProfileBloc>(context).state as UserProfileStateGetSuccessful).user.chipAmount;
           return SafeArea(
             child: PageControllerHolder(
               pageController: pageController,
               child: Scaffold(
                 backgroundColor: AppColors.primary,
-                appBar: CustomAppBar(context: context),
+                appBar: CustomAppBar(context: context, chip: chip),
                 bottomNavigationBar: buildGNav(navTextStyle),
                 body: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
