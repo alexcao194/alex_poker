@@ -78,7 +78,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   }
 
   FutureOr<void> _onSitDown(PlayEventSitDown event, Emitter<PlayState> emit) {
-    sitDown.call(event.tableId, event.seatId, event.amount);
+    sitDown.call(event.roomId, event.seatId, event.amount);
   }
 
   FutureOr<void> _onRaise(PlayEventRaise event, Emitter<PlayState> emit) {

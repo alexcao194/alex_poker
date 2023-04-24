@@ -38,13 +38,13 @@ class PlayEventLeave extends PlayEvent {
 }
 
 class PlayEventSitDown extends PlayEvent {
-  const PlayEventSitDown({required this.amount, required this.seatId, required this.tableId});
+  const PlayEventSitDown({required this.amount, required this.seatId, required this.roomId});
   final int seatId;
-  final String tableId;
+  final String roomId;
   final int amount;
 
   @override
-  List<Object?> get props => [amount, seatId, tableId];
+  List<Object?> get props => [amount, seatId, roomId];
 }
 
 class PlayEventCall extends PlayEvent {

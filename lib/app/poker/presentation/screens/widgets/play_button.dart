@@ -1,9 +1,10 @@
+import 'package:alex_poker/app/poker/presentation/screens/widgets/pick_amount_dialog.dart';
 import 'package:alex_poker/config/app_colors.dart';
 import 'package:alex_poker/core/services/app_router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttericon/entypo_icons.dart';
-
+import '../../../domain/entities/seat.dart';
 import '../../bloc/play/play_bloc.dart';
 
 enum PlayActions {
@@ -17,11 +18,15 @@ class PlayButton extends StatelessWidget {
   const PlayButton({
     super.key,
     required this.playActions,
-    this.active
+    this.active,
+    required this.seat,
+    required this.minBet
   });
 
   final PlayActions playActions;
   final bool? active;
+  final Seat seat;
+  final int minBet;
   final BorderRadius _callBorderRadius = const BorderRadius.only(
       bottomRight:Radius.circular(15),
       bottomLeft: Radius.circular(30.0),
@@ -65,7 +70,7 @@ class PlayButton extends StatelessWidget {
           ),
           child: MaterialButton(
             onPressed: (active == true) ? () {
-              _call();
+              _call(context, seat);
             } : null,
             padding: const EdgeInsets.all(2.0),
             child: Icon(
@@ -104,14 +109,26 @@ class PlayButton extends StatelessWidget {
     }
   }
 
-  void _call() {
+  void _call(BuildContext context, Seat seat) {
     var roomId = (BlocProvider.of<PlayBloc>(AppRouter.context).state as PlayStatePlaying).room.id;
     switch(playActions) {
       case PlayActions.check:
         BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventCheck(roomId: roomId));
         break;
       case PlayActions.raise:
-        BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventRaise(roomId: roomId, amount: 500));
+        showDialog(
+            context: context,
+            builder: (context) {
+              return PickAmountDiaLog(
+                  maxAmount: seat.stack + seat.bet,
+                  minAmount: minBet,
+                  initType: InitType.min,
+                  action: (amount) {
+                    BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventRaise(roomId: roomId, amount: amount));
+                  }
+              );
+            }
+        );
         break;
       case PlayActions.call:
         BlocProvider.of<PlayBloc>(AppRouter.context).add(PlayEventCall(roomId: roomId));

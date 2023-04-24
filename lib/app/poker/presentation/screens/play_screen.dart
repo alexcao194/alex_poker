@@ -305,14 +305,34 @@ class _PlayScreenState extends State<PlayScreen> {
                             children: [
                               Row(
                                 children: [
-                                  PlayButton(playActions: PlayActions.raise, active: (_appSeats[1]!.bet < _appSeats[1]!.stack)),
-                                  PlayButton(playActions: PlayActions.check, active: (_maxBet == _appSeats[1]!.bet))
+                                  PlayButton(
+                                      playActions: PlayActions.raise,
+                                      active: (_appSeats[1]!.bet < _appSeats[1]!.stack),
+                                      minBet: _maxBet,
+                                      seat: _appSeats[1]!
+                                  ),
+                                  PlayButton(
+                                      playActions: PlayActions.check,
+                                      active: (_maxBet == _appSeats[1]!.bet),
+                                      minBet: _maxBet,
+                                      seat: _appSeats[1]!
+                                  )
                                 ],
                               ),
                               Row(
                                 children: [
-                                  PlayButton(playActions: PlayActions.call, active: (_maxBet > _appSeats[1]!.bet)),
-                                  PlayButton(playActions: PlayActions.fold, active: (_maxBet > _appSeats[1]!.bet))
+                                  PlayButton(
+                                      playActions: PlayActions.call,
+                                      active: (_maxBet > _appSeats[1]!.bet),
+                                      minBet: _maxBet,
+                                      seat: _appSeats[1]!
+                                  ),
+                                  PlayButton(
+                                      playActions: PlayActions.fold,
+                                      active: (_maxBet > _appSeats[1]!.bet),
+                                      minBet: _maxBet,
+                                      seat: _appSeats[1]!
+                                  )
                                 ],
                               )
                             ],
@@ -369,8 +389,8 @@ class _PlayScreenState extends State<PlayScreen> {
           ? Player(isActive: playState.room.seats[index]!.turn, name: playState.room.seats[index]!.player.name, pot: playState.room.seats[index]!.stack, oriented: labelOriented, bet: playState.room.seats[index]!.bet)
           : SitDownButton(
               seatId: index,
-              amount: 10000,
-              roomId: playState.room.id,
+              room: playState.room,
+              user: userState.user,
             );
     }
   }
