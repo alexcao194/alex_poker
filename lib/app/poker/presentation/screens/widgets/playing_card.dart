@@ -12,7 +12,8 @@ class PlayingCard extends StatelessWidget {
     required this.suit,
     this.display,
     this.active,
-    this.isSet
+    this.isSet,
+    this.scale = 1
   }) : super(key: key);
 
   final String rank;
@@ -20,14 +21,15 @@ class PlayingCard extends StatelessWidget {
   final bool? display;
   final bool? active;
   final bool? isSet;
+  final double scale;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: (display == true || display == null) ? RoundedShadowBox(
         radius: 12.0,
-        height: 55.0,
-        width: 42.0,
+        height: 55.0 * scale,
+        width: 42.0 * scale,
         spreadRadius: 1,
         blurRadius: 5,
         color: (isSet == true) ? AppColors.primary : AppColors.primaryBackground,
@@ -39,20 +41,21 @@ class PlayingCard extends StatelessWidget {
               left: 5,
               child: Text(rank,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: AppColors.primaryWhite
+                      color: AppColors.primaryWhite,
+                      fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize! * scale
                   )
               ),
             ),
             Positioned(
               bottom: 3,
               right: 5,
-              child: Image.asset(getType(suit), height: 15, width: 15),
+              child: Image.asset(getType(suit), height: 15 * scale, width: 15 * scale),
             )
           ],
         ) : null,
-      ) : const SizedBox(
-        height: 55,
-        width: 42,
+      ) : SizedBox(
+        height: 55 * scale,
+        width: 42 * scale,
       ),
     );
   }

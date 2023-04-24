@@ -1,5 +1,6 @@
 import 'package:alex_poker/app/home/presentation/bloc/user_profile_bloc.dart';
 import 'package:alex_poker/app/poker/domain/entities/seat.dart';
+import 'package:alex_poker/app/poker/domain/entities/card.dart' as poker;
 import 'package:alex_poker/config/app_colors.dart';
 import 'package:alex_poker/config/app_paths.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,22 @@ import 'widgets/drop_menu.dart';
 class PlayScreen extends StatefulWidget {
   const PlayScreen({Key? key}) : super(key: key);
 
+  final Map<dynamic, int> deck = const {
+    '2' : 2,
+    '3' : 3,
+    '4' : 4,
+    '5' : 5,
+    '6' : 6,
+    '7' : 7,
+    '8' : 8,
+    '9' : 9,
+    '10' : 10,
+    'J' : 11,
+    'Q' : 12,
+    'K' : 13,
+    'A' : 14
+  };
+
   @override
   State<PlayScreen> createState() => _PlayScreenState();
 }
@@ -29,6 +46,7 @@ class PlayScreen extends StatefulWidget {
 class _PlayScreenState extends State<PlayScreen> {
   final Duration _distributeDuration = const Duration(milliseconds: 200);
   final List<bool> _distributed = [false, false, false, false, false, false, false, false, false, false];
+  List<bool> _set = [];
   final int _distributedDelay = 50;
   final _playerCount = 5;
   int _maxBet = 0;
@@ -58,6 +76,10 @@ class _PlayScreenState extends State<PlayScreen> {
               _newHand(playState);
               _messageUpdate(playState);
               _updateBet(playState);
+              _set.clear();
+              if(_appSeats[1] != null && playState.room.board.isNotEmpty) {
+                _set = poker.Card.getSet(playState.room.board, _appSeats[1]!.hand);
+              }
               return WillPopScope(
                 onWillPop: () async {
                   AppNotification.showAlertDialog(
@@ -107,27 +129,31 @@ class _PlayScreenState extends State<PlayScreen> {
                               suit: playState.room.board.isNotEmpty ? playState.room.board[0].suit : Suit.carreaux,
                               rank: playState.room.board.isNotEmpty ? playState.room.board[0].rank : "Hack cc",
                               display: _display && playState.room.board.isNotEmpty,
+                              isSet: _set.isNotEmpty ? _set[0] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 2 ? playState.room.board[1].suit : Suit.carreaux,
                               rank: playState.room.board.length >= 2 ? playState.room.board[1].rank : "Hack cc",
                               display: _display && playState.room.board.length >= 2,
-                              isSet: true,
+                              isSet: _set.isNotEmpty ? _set[1] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 3 ? playState.room.board[2].suit : Suit.carreaux,
                               rank: playState.room.board.length >= 3 ? playState.room.board[2].rank : "Hack cc",
                               display: _display && playState.room.board.length >= 3,
+                              isSet: _set.isNotEmpty ? _set[2] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 4 ? playState.room.board[3].suit : Suit.carreaux,
                               rank: playState.room.board.length >= 4 ? playState.room.board[3].rank : "Hack cc",
                               display: _display && playState.room.board.length >= 4,
+                              isSet: _set.isNotEmpty ? _set[3] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 5 ? playState.room.board[4].suit : Suit.carreaux,
                               rank: playState.room.board.length >= 5 ? playState.room.board[4].rank : "Hack cc",
                               display: _display && playState.room.board.length >= 5,
+                              isSet: _set.isNotEmpty ? _set[4] : false,
                             ),
                           ],
                         ),
@@ -160,7 +186,7 @@ class _PlayScreenState extends State<PlayScreen> {
                         ),
                         AnimatedPositioned(
                           left: _distributed[3] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
-                          top: _distributed[3] ? size.height * 0.5 - 60 : size.height * 0.5,
+                          top: _distributed[3] ? size.height * 0.5 - 35 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
@@ -170,7 +196,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          left: _distributed[4] ? size.width * 0.5 - size.height * 0.5 + 70 : size.width * 0.5,
+                          left: _distributed[4] ? size.width * 0.5 - size.height * 0.5 + 95 : size.width * 0.5,
                           top: _distributed[4] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -192,7 +218,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[6] ? size.width * 0.5 - size.height * 0.5 + 62 : size.width * 0.5,
+                          right: _distributed[6] ? size.width * 0.5 - size.height * 0.5 + 92 : size.width * 0.5,
                           top: _distributed[6] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -203,7 +229,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[7] ? size.width * 0.5 - size.height * 0.5 + 112 : size.width * 0.5,
+                          right: _distributed[7] ? size.width * 0.5 - size.height * 0.5 + 122 : size.width * 0.5,
                           top: _distributed[7] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -215,7 +241,7 @@ class _PlayScreenState extends State<PlayScreen> {
                         ),
                         AnimatedPositioned(
                           right: _distributed[8] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
-                          top: _distributed[8] ? size.height * 0.5 - 10 : size.height * 0.5,
+                          top: _distributed[8] ? size.height * 0.5 - 8 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
@@ -226,7 +252,7 @@ class _PlayScreenState extends State<PlayScreen> {
                         ),
                         AnimatedPositioned(
                           right: _distributed[9] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
-                          top: _distributed[9] ? size.height * 0.5 - 60 : size.height * 0.5,
+                          top: _distributed[9] ? size.height * 0.5 - 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: AnimatedRotation(
@@ -424,6 +450,8 @@ class _PlayScreenState extends State<PlayScreen> {
           rank: seat.hand[pos].rank,
           suit: seat.hand[pos].suit,
           display: _distributed[index],
+          scale: (index == 1 || index == 0) ? 1 : 0.5,
+          isSet: (index == 1 || index == 0) && _set.isNotEmpty ? _set[_set.length - 2 + index] : false,
       );
     } else if(seat != null) {
       return PlayingCard(
