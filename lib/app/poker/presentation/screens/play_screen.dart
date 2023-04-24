@@ -160,21 +160,21 @@ class _PlayScreenState extends State<PlayScreen> {
                         const Positioned(top: 8, right: 8, child: UserCard()),
 
                         AnimatedPositioned(
-                          bottom: _distributed[0] ? size.height * 0.1 + _offsetPlayer : size.height * 0.5,
-                          left: _distributed[0] ? size.width * 0.5 : size.width * 0.5,
+                          bottom: _distributed[0] ? size.height * 0.1 + 32 : size.height * 0.5,
+                          right: _distributed[0] ? size.width * 0.5 - 52 : size.width * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: buildCard(0, _appSeats[1], 0)
                         ),
                         AnimatedPositioned(
-                          bottom: _distributed[1] ? size.height * 0.1 + _offsetPlayer : size.height * 0.5,
-                          left: _distributed[1] ? size.width * 0.5 - 54 : size.width * 0.5,
+                          bottom: _distributed[1] ? size.height * 0.1 + 32 : size.height * 0.5,
+                          left: _distributed[1] ? size.width * 0.5 - 52 : size.width * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: buildCard(1, _appSeats[1], 1)
                         ),
                         AnimatedPositioned(
-                          left: _distributed[2] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
+                          left: _distributed[2] ? size.width * 0.15 + 35 : size.width * 0.5,
                           top: _distributed[2] ? size.height * 0.5 - 10 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -185,7 +185,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          left: _distributed[3] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
+                          left: _distributed[2] ? size.width * 0.15 + 35 : size.width * 0.5,
                           top: _distributed[3] ? size.height * 0.5 - 35 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -196,7 +196,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          left: _distributed[4] ? size.width * 0.5 - size.height * 0.5 + 95 : size.width * 0.5,
+                          right: _distributed[4] ? size.width * 0.57 : size.width * 0.5,
                           top: _distributed[4] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -207,7 +207,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          left: _distributed[5] ? size.width * 0.5 - size.height * 0.5 + 120 : size.width * 0.5,
+                          right: _distributed[5] ? size.width * 0.57 + 25 : size.width * 0.5,
                           top: _distributed[5] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -218,7 +218,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[6] ? size.width * 0.5 - size.height * 0.5 + 92 : size.width * 0.5,
+                          left: _distributed[6] ? size.width * 0.57 + 25 : size.width * 0.5,
                           top: _distributed[6] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -229,7 +229,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[7] ? size.width * 0.5 - size.height * 0.5 + 122 : size.width * 0.5,
+                          left: _distributed[7] ? size.width * 0.57 : size.width * 0.5,
                           top: _distributed[7] ? size.height * 0.1 + 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -240,7 +240,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[8] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
+                          right: _distributed[8] ? size.width * 0.15 + 35 : size.width * 0.5,
                           top: _distributed[8] ? size.height * 0.5 - 8 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -251,7 +251,7 @@ class _PlayScreenState extends State<PlayScreen> {
                           ),
                         ),
                         AnimatedPositioned(
-                          right: _distributed[9] ? size.width * 0.5 - size.height * 0.7 : size.width * 0.5,
+                          right: _distributed[9] ? size.width * 0.15 + 35 : size.width * 0.5,
                           top: _distributed[9] ? size.height * 0.5 - 32 : size.height * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
@@ -267,12 +267,12 @@ class _PlayScreenState extends State<PlayScreen> {
                         ),
                         Positioned(
                           top: size.height * 0.1 - _offsetPlayer,
-                          left: size.width * 0.3,
+                          right: size.width * 0.57,
                           child: buildPlayer(playState, userState, 4),
                         ),
                         Positioned(
                           top: size.height * 0.1 - _offsetPlayer,
-                          right: size.width * 0.3,
+                          left: size.width * 0.57,
                           child: buildPlayer(playState, userState, 3),
                         ),
                         Positioned(

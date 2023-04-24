@@ -27,7 +27,7 @@ class PlayingCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: (display == true || display == null) ? RoundedShadowBox(
-        radius: 12.0,
+        radius: 12.0 * scale,
         height: 55.0 * scale,
         width: 42.0 * scale,
         spreadRadius: 1,

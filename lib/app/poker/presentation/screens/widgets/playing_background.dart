@@ -16,7 +16,7 @@ class PlayingBackground extends StatelessWidget {
       child: RoundedShadowBox(
         radius: 500,
         height: size.height * 0.8,
-        width: size.height * 1.6,
+        width: size.width * 0.7,
         blurRadius: 20,
         spreadRadius: 5,
         color: AppColors.primaryBackground,
