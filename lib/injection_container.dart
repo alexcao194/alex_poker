@@ -34,7 +34,7 @@ import 'app/poker/domain/usecases/call.dart' as poker;
 import 'app/poker/domain/usecases/check.dart' as poker;
 import 'app/poker/domain/usecases/fold.dart' as poker;
 import 'app/poker/domain/usecases/raise.dart' as poker;
-
+import 'app/poker/domain/usecases/stand_up.dart' as poker;
 import 'app/poker/domain/usecases/fetch_lobby_info.dart' as poker;
 import 'app/poker/presentation/bloc/room/room_bloc.dart' as poker;
 import 'app/poker/presentation/bloc/play/play_bloc.dart' as poker;
@@ -72,7 +72,8 @@ Future<void> init() async {
     call: sl(),
     check: sl(),
     fold: sl(),
-    raise: sl()
+    raise: sl(),
+    standUp: sl()
   ));
 
   // Usecase
@@ -91,6 +92,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => poker.Check(repositories: sl()));
   sl.registerLazySingleton(() => poker.Fold(repositories: sl()));
   sl.registerLazySingleton(() => poker.Raise(repositories: sl()));
+  sl.registerLazySingleton(() => poker.StandUp(repositories: sl()));
 
 
 

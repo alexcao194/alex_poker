@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:alex_poker/app/poker/domain/entities/room.dart';
 import 'package:alex_poker/app/poker/domain/usecases/call.dart';
 import 'package:alex_poker/app/poker/domain/usecases/sit_down.dart';
+import 'package:alex_poker/app/poker/domain/usecases/stand_up.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -25,6 +26,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   final Check check;
   final Raise raise;
   final Fold fold;
+  final StandUp standUp;
   Stream<PokerMessage>? controller;
   PlayBloc({
     required this.leaveRoom,
@@ -33,7 +35,8 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     required this.fold,
     required this.raise,
     required this.check,
-    required this.call
+    required this.call,
+    required this.standUp
 }) : super(PlayInitial()) {
     on<PlayEventConnect>(_onConnect);
     on<PlayEventLeave>(_onLeave);
@@ -44,6 +47,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     on<PlayEventCheck>(_onCheck);
     on<PlayEventFold>(_onFold);
     on<PlayEventRaise>(_onRaise);
+    on<PlayEventStandUp>(_onStandUp);
   }
 
   FutureOr<void> _onConnect(PlayEventConnect event, Emitter<PlayState> emit) {
@@ -95,5 +99,9 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
 
   FutureOr<void> _onCall(PlayEventCall event, Emitter<PlayState> emit) {
     call.call(event.roomId);
+  }
+
+  FutureOr<void> _onStandUp(PlayEventStandUp event, Emitter<PlayState> emit) {
+    standUp.call(event.roomId);
   }
 }

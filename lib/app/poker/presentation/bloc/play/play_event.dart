@@ -47,6 +47,13 @@ class PlayEventSitDown extends PlayEvent {
   List<Object?> get props => [amount, seatId, roomId];
 }
 
+class PlayEventStandUp extends PlayEvent {
+  const PlayEventStandUp({required this.roomId});
+  final String roomId;
+  @override
+  List<Object?> get props => [roomId];
+}
+
 class PlayEventCall extends PlayEvent {
   const PlayEventCall({required this.roomId});
   final String roomId;

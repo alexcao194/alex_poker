@@ -56,4 +56,9 @@ class RepositoriesImpl extends Repositories {
   void raise(String roomId, int amount) {
     realtimeData.raise(roomId, amount);
   }
+
+  @override
+  void standUp(String roomId) {
+    realtimeData.standUp(roomId);
+  }
 }

@@ -12,7 +12,6 @@ import '../../../core/presentation/widget/custom_app_bar.dart';
 import '../../../home/presentation/bloc/user_profile_bloc.dart';
 import '../../domain/entities/room.dart';
 import '../bloc/room/room_bloc.dart';
-import 'widgets/pick_amount_dialog.dart';
 
 class PokerRoom extends StatefulWidget {
   const PokerRoom({Key? key}) : super(key: key);

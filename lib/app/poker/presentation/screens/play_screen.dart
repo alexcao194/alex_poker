@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:alex_poker/app/home/presentation/bloc/user_profile_bloc.dart';
 import 'package:alex_poker/app/poker/domain/entities/seat.dart';
 import 'package:alex_poker/app/poker/domain/entities/card.dart' as poker;
@@ -77,6 +79,9 @@ class _PlayScreenState extends State<PlayScreen> {
               _messageUpdate(playState);
               _updateBet(playState);
               _set.clear();
+              if(playState.room.board.isEmpty && _appSeats[1] != null && _appSeats[1]!.hand.isEmpty && _appSeats[1]!.stack == 0) {
+                BlocProvider.of<PlayBloc>(context).add(PlayEventStandUp(roomId: playState.room.id));
+              }
               if(_appSeats[1] != null && playState.room.board.isNotEmpty) {
                 _set = poker.Card.getSet(playState.room.board, _appSeats[1]!.hand);
               }
@@ -308,13 +313,13 @@ class _PlayScreenState extends State<PlayScreen> {
                                   PlayButton(
                                       playActions: PlayActions.raise,
                                       active: (_appSeats[1]!.bet < _appSeats[1]!.stack),
-                                      minBet: _maxBet,
+                                      minBet: min(_maxBet, _appSeats[1]!.bet + _appSeats[1]!.stack),
                                       seat: _appSeats[1]!
                                   ),
                                   PlayButton(
                                       playActions: PlayActions.check,
                                       active: (_maxBet == _appSeats[1]!.bet),
-                                      minBet: _maxBet,
+                                      minBet: min(_maxBet, _appSeats[1]!.bet + _appSeats[1]!.stack),
                                       seat: _appSeats[1]!
                                   )
                                 ],
@@ -324,13 +329,13 @@ class _PlayScreenState extends State<PlayScreen> {
                                   PlayButton(
                                       playActions: PlayActions.call,
                                       active: (_maxBet > _appSeats[1]!.bet),
-                                      minBet: _maxBet,
+                                      minBet: min(_maxBet, _appSeats[1]!.bet + _appSeats[1]!.stack),
                                       seat: _appSeats[1]!
                                   ),
                                   PlayButton(
                                       playActions: PlayActions.fold,
                                       active: (_maxBet > _appSeats[1]!.bet),
-                                      minBet: _maxBet,
+                                      minBet: min(_maxBet, _appSeats[1]!.bet + _appSeats[1]!.stack) ,
                                       seat: _appSeats[1]!
                                   )
                                 ],

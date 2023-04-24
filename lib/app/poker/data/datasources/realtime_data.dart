@@ -14,6 +14,7 @@ abstract class RealtimeData {
   void joinRoom(String id);
   void leaveRoom(String id);
   void sitDown(String roomId, int seatId, int amount);
+  void standUp(String roomId);
   void fold(String roomId);
   void check(String roomId);
   void raise(String roomId, int amount);
@@ -163,6 +164,8 @@ class RealtimeDataImpl extends RealtimeData {
     });
   }
 
+
+
   @override
   void call(String roomId) {
     PokerSocket.instance.emit(PokerAction.call, {
@@ -189,6 +192,13 @@ class RealtimeDataImpl extends RealtimeData {
     PokerSocket.instance.emit(PokerAction.raise, {
       "tableId" : roomId,
       'amount' : amount
+    });
+  }
+
+  @override
+  void standUp(String roomId) {
+    PokerSocket.instance.emit(PokerAction.standUp, {
+      "tableId" : roomId
     });
   }
 }
