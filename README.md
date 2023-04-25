@@ -1,16 +1,30 @@
-# alex_poker
+# Alex Poker
+![alt play](readme_assets/play.png)
 
-A Poker app free to play
 
-## Getting Started
+Đây là dự án game poker sử dụng Flutter. Game được thiết kế đơn giản và dễ chơi, phù hợp cho cả những người mới bắt đầu chơi poker.
 
-This project is a starting point for a Flutter application.
+## Play Screen
+![alt play](readme_assets/play.png)
 
-A few resources to get you started if this is your first Flutter project:
+## Lobby Animation
+![GIF lobby!](readme_assets/lobby.gif)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Cài đặt
+Clone repository này.
+Chạy lệnh flutter packages get để cài đặt các dependencies.
+```code
+flutter packages get
+```
+Chạy lệnh flutter run để khởi chạy ứng dụng trên máy tính của bạn hoặc flutter build để build thành file APK hoặc IPA để cài đặt trên thiết bị di động.
+```code
+flutter run
+```
+Yêu cầu: Bạn cần cài đặt Flutter và Android Studio trước khi chạy ứng dụng.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tác giả
+Alex Poker được phát triển bởi Alex Cao.
+
+
+
+
