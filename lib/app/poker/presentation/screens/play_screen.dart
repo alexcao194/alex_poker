@@ -57,6 +57,7 @@ class _PlayScreenState extends State<PlayScreen> {
   bool _isEnd = true;
   bool _display = false;
   int _currentSeat = 0;
+  bool _seating = false;
   late ScrollController _scrollController;
   final Map<int, Seat?> _appSeats = {
     1 : null,
@@ -71,10 +72,11 @@ class _PlayScreenState extends State<PlayScreen> {
     var size = MediaQuery.of(context).size;
     return BlocBuilder<UserProfileBloc, UserProfileState>(
       builder: (context, userState) {
+        userState as UserProfileStateGetSuccessful;
         return BlocBuilder<PlayBloc, PlayState>(
           builder: (context, playState) {
             if (playState is PlayStatePlaying) {
-              _getSeats(playState, userState as UserProfileStateGetSuccessful);
+              _getSeats(playState, userState);
               _newHand(playState);
               _messageUpdate(playState);
               _updateBet(playState);
@@ -82,7 +84,7 @@ class _PlayScreenState extends State<PlayScreen> {
               if(playState.room.board.isEmpty && _appSeats[1] != null && _appSeats[1]!.hand.isEmpty && _appSeats[1]!.stack == 0) {
                 BlocProvider.of<PlayBloc>(context).add(PlayEventStandUp(roomId: playState.room.id));
               }
-              if(_appSeats[1] != null && playState.room.board.isNotEmpty) {
+              if(_appSeats[1] != null && playState.room.board.isNotEmpty && _seating && _appSeats[1]!.hand.isNotEmpty) {
                 _set = poker.Card.getSet(playState.room.board, _appSeats[1]!.hand);
               }
               return WillPopScope(
@@ -118,9 +120,11 @@ class _PlayScreenState extends State<PlayScreen> {
                                 controller: _scrollController,
                                 itemCount: _messages.length,
                                 itemBuilder: (context, index) {
-                                  return Text(_messages[index], style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                                    color: AppColors.primaryWhite
-                                  ));
+                                  return Text(_messages[index].replaceAll('-', ''),
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                          color: _messages[index].startsWith('-') ? AppColors.cyan : AppColors.primaryWhite
+                                      )
+                                  );
                                 },
                               ),
                             ),
@@ -163,20 +167,33 @@ class _PlayScreenState extends State<PlayScreen> {
                           ],
                         ),
                         const Positioned(top: 8, right: 8, child: UserCard()),
-
-                        AnimatedPositioned(
+                        if(_seating) AnimatedPositioned(
                           bottom: _distributed[0] ? size.height * 0.1 + 32 : size.height * 0.5,
                           right: _distributed[0] ? size.width * 0.5 - 52 : size.width * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: buildCard(0, _appSeats[1], 0)
                         ),
-                        AnimatedPositioned(
+                        if(_seating) AnimatedPositioned(
                           bottom: _distributed[1] ? size.height * 0.1 + 32 : size.height * 0.5,
                           left: _distributed[1] ? size.width * 0.5 - 52 : size.width * 0.5,
                           duration: _distributeDuration,
                           curve: Curves.easeOut,
                           child: buildCard(1, _appSeats[1], 1)
+                        ),
+                        if(!_seating) AnimatedPositioned(
+                            bottom: _distributed[0] ? size.height * 0.1 + 32 : size.height * 0.5,
+                            right: _distributed[0] ? size.width * 0.5 - 10 : size.width * 0.5,
+                            duration: _distributeDuration,
+                            curve: Curves.easeOut,
+                            child: buildCard(0, _appSeats[1], 0)
+                        ),
+                        if(!_seating) AnimatedPositioned(
+                            bottom: _distributed[1] ? size.height * 0.1 + 32 : size.height * 0.5,
+                            left: _distributed[1] ? size.width * 0.5 - 52 : size.width * 0.5,
+                            duration: _distributeDuration,
+                            curve: Curves.easeOut,
+                            child: buildCard(1, _appSeats[1], 1)
                         ),
                         AnimatedPositioned(
                           left: _distributed[2] ? size.width * 0.15 + 35 : size.width * 0.5,
@@ -361,16 +378,26 @@ class _PlayScreenState extends State<PlayScreen> {
 
   void _getSeats(PlayStatePlaying playState, UserProfileStateGetSuccessful userState) {
     Map<int, Seat?> seats = playState.room.seats;
+    _seating = false;
     for (int i = 1; i <= 5; i++) {
       if (seats[i] != null && seats[i]!.player.name == userState.user.username) {
         _currentSeat = i;
+        _seating = true;
       }
     }
-    _appSeats[1] = seats[_currentSeat];
-    _appSeats[2] = seats[(_currentSeat % 5) + 1];
-    _appSeats[3] = seats[((_currentSeat + 1) % 5) + 1];
-    _appSeats[4] = seats[((_currentSeat + 2) % 5) + 1];
-    _appSeats[5] = seats[((_currentSeat + 3) % 5) + 1];
+    if(_seating) {
+      _appSeats[1] = seats[_currentSeat];
+      _appSeats[2] = seats[(_currentSeat % 5) + 1];
+      _appSeats[3] = seats[((_currentSeat + 1) % 5) + 1];
+      _appSeats[4] = seats[((_currentSeat + 2) % 5) + 1];
+      _appSeats[5] = seats[((_currentSeat + 3) % 5) + 1];
+    } else {
+      _appSeats[1] = seats[1];
+      _appSeats[2] = seats[2];
+      _appSeats[3] = seats[3];
+      _appSeats[4] = seats[4];
+      _appSeats[5] = seats[5];
+    }
   }
 
   Widget buildPlayer(PlayStatePlaying playState, UserProfileStateGetSuccessful userState, int index) {
@@ -475,15 +502,15 @@ class _PlayScreenState extends State<PlayScreen> {
           rank: seat.hand[pos].rank,
           suit: seat.hand[pos].suit,
           display: _distributed[index],
-          scale: (index == 1 || index == 0) ? 1 : 0.5,
-          isSet: (index == 1 || index == 0) && _set.isNotEmpty ? _set[_set.length - 2 + index] : false,
+          scale: (index == 1 || index == 0) && _seating ? 1 : 0.5,
+          isSet: (index == 1 || index == 0) && _seating && _set.isNotEmpty ? _set[_set.length - 2 + index] : false,
       );
     } else if(seat != null) {
       return PlayingCard(
           rank: 'Hack cc',
           suit: Suit.trefles,
           active: false,
-          display: _distributed[index],
+          display: !(index == 1 || index == 0) && _distributed[index] && seat.hand.isNotEmpty,
       );
     } else {
       return const SizedBox();
@@ -503,8 +530,18 @@ class _PlayScreenState extends State<PlayScreen> {
   }
 
   void _messageUpdate(PlayStatePlaying playState) {
+    print(playState.room.winMessage);
     if(playState.room.message.isNotEmpty && (_messages.isEmpty || playState.room.message != _messages.last)) {
       _messages.add(playState.room.message);
+      if(_scrollController.positions.isNotEmpty) {
+        _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent + (_scrollController.position.maxScrollExtent / _scrollController.positions.length),
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeOut);
+      }
+    }
+    if(playState.room.winMessage.isNotEmpty && (_messages.isEmpty || playState.room.winMessage.last != _messages.last)) {
+      _messages.add('-${playState.room.winMessage.last}');
       if(_scrollController.positions.isNotEmpty) {
         _scrollController.animateTo(
             _scrollController.position.maxScrollExtent + (_scrollController.position.maxScrollExtent / _scrollController.positions.length),

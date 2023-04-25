@@ -27,6 +27,7 @@ class CoreCacheDataImpl extends CoreCacheData {
 
   @override
   String getIP4() {
+    return 'alex-server-5sk7.onrender.com';
     String? ip = sharedPreferences.getString(_ipKey);
     if(ip == null) {
       return '';

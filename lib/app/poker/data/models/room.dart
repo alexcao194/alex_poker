@@ -83,7 +83,7 @@ class RoomModel extends Room {
       seats: seats,
       sidePots: [],
       turn: json['turn'] ?? 0,
-      winMessage: [],
+      winMessage: json['winMessages'] != null ? [for(var message in json['winMessages']) message.toString()] : [],
       message : json['message'] ?? ""
     );
   }

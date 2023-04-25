@@ -14,7 +14,7 @@ class RemoteDataImpl extends RemoteData {
 
   @override
   Future<UserModel> getProfile({required String token, required String ip}) async {
-    var res = await dio.get('http://$ip/api/auth',
+    var res = await dio.get('https://$ip/api/auth',
         options: Options(
           contentType: 'application/json',
           headers: {

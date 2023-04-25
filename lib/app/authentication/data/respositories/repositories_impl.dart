@@ -29,7 +29,7 @@ class RepositoriesImpl extends Repositories {
       }
     } on DioError catch (e) {
       print(e);
-      return Failure(message: ' '.join(e.error.toString().split(RegExp(r'[-]'))).caption());
+      return Failure(message: ' '.join(e.error.toString().split(RegExp(r'-'))).caption());
     }
     return null;
   }
@@ -43,7 +43,7 @@ class RepositoriesImpl extends Repositories {
         coreCacheData.cacheToken(token);
       }
     } on DioError catch (e) {
-      return Failure(message: ' '.join(e.error.toString().split(RegExp(r'[-]'))).caption());
+      return Failure(message: ' '.join(e.error.toString().split(RegExp(r'-'))).caption());
     }
     return null;
   }

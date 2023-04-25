@@ -15,7 +15,7 @@ class RemoteDataImpl extends RemoteData {
 
   @override
   Future<String?> login(AccountModal account, String ip) async {
-    var res = await dio.post('http://$ip/api/auth',
+    var res = await dio.post('https://$ip/api/auth',
         options: Options(
             contentType: 'application/json',
         ),
@@ -38,7 +38,7 @@ class RemoteDataImpl extends RemoteData {
 
   @override
   Future<String?> signup(AccountModal account, String ip) async {
-    var res = await dio.post('http://$ip/api/users',
+    var res = await dio.post('https://$ip/api/users',
         options: Options(
             contentType: 'application/json'
         ),
@@ -52,7 +52,8 @@ class RemoteDataImpl extends RemoteData {
         throw DioError(requestOptions: RequestOptions(path: 'post-api/users'), error: 'network error, path : $ip');
       }
     );
-    var message = res.data['message'].toString();if(message == 'signup-successful') {
+    var message = res.data['message'].toString();
+    if(message == 'signup-successful') {
       return res.data['token'].toString();
     } else {
       throw DioError(requestOptions: RequestOptions(path: 'post-api/users'), error: message);
