@@ -187,11 +187,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login(String email, String password) {
-    BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventLogin(
-      account: Account(
-        email: email,
-        password: password
-      )
-    ));
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventLogin(account: Account(email: email, password: password)));
   }
 }

@@ -94,8 +94,6 @@ Future<void> init() async {
   sl.registerLazySingleton(() => poker.Raise(repositories: sl()));
   sl.registerLazySingleton(() => poker.StandUp(repositories: sl()));
 
-
-
   // Repositories
   sl.registerLazySingleton<ac.Repositories>(() => ac.RepositoriesImpl(
       remoteData: sl(),
@@ -112,8 +110,6 @@ Future<void> init() async {
     realtimeData: sl()
   ));
 
-
-
   // Data
   sl.registerLazySingleton<ac.RemoteData>(() => ac.RemoteDataImpl(
       dio: sl()
@@ -125,7 +121,6 @@ Future<void> init() async {
   sl.registerLazySingleton<ac.CacheData>(() => ac.CacheDataImpl(sharedPreferences: sl()));
 
   sl.registerLazySingleton<CoreCacheData>(() => CoreCacheDataImpl(sharedPreferences: sl()));
-
 
   // 3th service
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

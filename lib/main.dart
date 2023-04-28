@@ -16,25 +16,18 @@ import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.portraitUp
-  ]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
   await di.init();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-  runApp(
-    MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => PageCubit()),
-          BlocProvider(create: (_) => di.sl<AuthenticationBloc>()),
-          BlocProvider(create: (_) => di.sl<AccountCubit>()),
-          BlocProvider(create: (_) => di.sl<IpCubit>()),
-          BlocProvider(create: (_) => di.sl<UserProfileBloc>()),
-          BlocProvider(create: (_) => di.sl<RoomBloc>()),
-          BlocProvider(create: (_) => di.sl<PlayBloc>())
-        ],
-        child: const MyApp())
-  );
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(create: (_) => PageCubit()),
+    BlocProvider(create: (_) => di.sl<AuthenticationBloc>()),
+    BlocProvider(create: (_) => di.sl<AccountCubit>()),
+    BlocProvider(create: (_) => di.sl<IpCubit>()),
+    BlocProvider(create: (_) => di.sl<UserProfileBloc>()),
+    BlocProvider(create: (_) => di.sl<RoomBloc>()),
+    BlocProvider(create: (_) => di.sl<PlayBloc>())
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -47,11 +40,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRouter.generateRoute,
       navigatorKey: AppRouter.navigatorKey,
-      theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.deepPurple,
-        fontFamily: AppFonts.poppins
-      ),
+      theme: ThemeData(useMaterial3: true, primarySwatch: Colors.deepPurple, fontFamily: AppFonts.poppins),
     );
   }
 }

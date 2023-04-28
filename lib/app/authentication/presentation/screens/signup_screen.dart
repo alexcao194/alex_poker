@@ -77,12 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: AuthenticationButton(
                             onTap: () {
-                              _signup(
-                                  email: emailController.value.text,
-                                  password: passwordController.value.text,
-                                  rePassword: rePasswordController.value.text,
-                                  username: usernameController.value.text
-                              );
+                              _signup(email: emailController.value.text, password: passwordController.value.text, rePassword: rePasswordController.value.text, username: usernameController.value.text);
                             },
                             child: Text(
                               'Signup',
@@ -167,11 +162,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _signup({required String email, required String password, required String rePassword, required String username}) {
-    BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventSignup(account: Account(
-      email: email,
-      password: password,
-      name: username,
-      rePassword: rePassword
-    )));
+    BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventSignup(account: Account(email: email, password: password, name: username, rePassword: rePassword)));
   }
 }

@@ -12,7 +12,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<AuthenticationBloc>(context).add(const AuthenticationEventReLogin());
@@ -32,8 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 90.0),
-          child: const Icon(Icons.flutter_dash)
-      ),
+          child: const Icon(Icons.flutter_dash)),
     );
   }
 }
