@@ -30,7 +30,7 @@ enum PokerAction {
 
 extension PokerActionExtension on PokerAction {
   String get toSocketEvent {
-    switch(this) {
+    switch (this) {
       case PokerAction.connected:
         return 'CONNECTED';
       case PokerAction.disconnected:
@@ -83,12 +83,14 @@ extension PokerActionExtension on PokerAction {
 
 class PokerMessage {
   const PokerMessage({required this.pokerAction, required this.data});
+
   final PokerAction pokerAction;
   final dynamic data;
 }
 
 class PokerSocket {
   PokerSocket._();
+
   static PokerSocket? _instance;
 
   static PokerSocket get instance {
@@ -100,61 +102,27 @@ class PokerSocket {
   final StreamController<PokerMessage> _streamController = StreamController<PokerMessage>.broadcast();
 
   void connect(String ip, String token) {
-    _socket = sk.io('http://$ip/',
-        sk.OptionBuilder()
-            .setTransports(['websocket'])
-            .disableAutoConnect()
-            .build()
-    ).connect();
+    _socket = sk.io('http://$ip/', sk.OptionBuilder().setTransports(['websocket']).disableAutoConnect().build()).connect();
     _socket.onConnect((data) {
-      _streamController.sink.add(const PokerMessage(
-          pokerAction: PokerAction.connected,
-          data: 'Connect Successful'
-      ));
+      _streamController.sink.add(const PokerMessage(pokerAction: PokerAction.connected, data: 'Connect Successful'));
     });
     _socket.onDisconnect((data) {
-      _streamController.sink.add(const PokerMessage(
-          pokerAction: PokerAction.disconnected,
-          data: 'Disconnected'
-      ));
+      _streamController.sink.add(const PokerMessage(pokerAction: PokerAction.disconnected, data: 'Disconnected'));
     });
     _socket.onError((data) {
-      _streamController.sink.add(PokerMessage(
-          pokerAction: PokerAction.error,
-          data: data
-      ));
+      _streamController.sink.add(PokerMessage(pokerAction: PokerAction.error, data: data));
     });
     _socket.on(PokerAction.receiveLobbyInfo.toSocketEvent, (data) {
-      _streamController.sink.add(
-        PokerMessage(
-            pokerAction: PokerAction.receiveLobbyInfo,
-            data: data
-        )
-      );
+      _streamController.sink.add(PokerMessage(pokerAction: PokerAction.receiveLobbyInfo, data: data));
     });
     _socket.on(PokerAction.roomJoined.toSocketEvent, (data) {
-      _streamController.sink.add(
-          PokerMessage(
-              pokerAction: PokerAction.roomJoined,
-              data: data
-          )
-      );
+      _streamController.sink.add(PokerMessage(pokerAction: PokerAction.roomJoined, data: data));
     });
     _socket.on(PokerAction.roomsUpdated.toSocketEvent, (data) {
-      _streamController.sink.add(
-          PokerMessage(
-              pokerAction: PokerAction.receiveLobbyInfo,
-              data: data
-          )
-      );
+      _streamController.sink.add(PokerMessage(pokerAction: PokerAction.receiveLobbyInfo, data: data));
     });
     _socket.on(PokerAction.roomUpdated.toSocketEvent, (data) {
-      _streamController.sink.add(
-        PokerMessage(
-          pokerAction: PokerAction.roomUpdated,
-          data: data
-        )
-      );
+      _streamController.sink.add(PokerMessage(pokerAction: PokerAction.roomUpdated, data: data));
     });
   }
 

@@ -5,11 +5,14 @@ import '../../../app/home/presentation/screens/home_screen.dart';
 import '../../../app/poker/presentation/screens/play_screen.dart';
 import '../../../app/poker/presentation/screens/poker_room_screen.dart';
 import '../../../splash_screen.dart';
+
 class AppRouter {
   AppRouter._();
+
   static final navigatorKey = GlobalKey<NavigatorState>();
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch(settings.name) {
+    switch (settings.name) {
       case AppRoutes.entry:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case AppRoutes.splash:
@@ -26,12 +29,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       default:
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            appBar: AppBar(),
-            body: const Center(
-                child: Text('Fallback')
-            ),
-        ));
+            builder: (_) => Scaffold(
+                  appBar: AppBar(),
+                  body: const Center(child: Text('Fallback')),
+                ));
     }
   }
 
@@ -46,14 +47,11 @@ class AppRouter {
   }
 
   static pushAndRemoveUntil(String route, String entry) {
-    navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        route,
-      ModalRoute.withName(entry)
-    );
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(route, ModalRoute.withName(entry));
   }
 
   static pop() {
-    if(navigatorKey.currentState!.canPop()) {
+    if (navigatorKey.currentState!.canPop()) {
       navigatorKey.currentState?.pop();
     }
   }
