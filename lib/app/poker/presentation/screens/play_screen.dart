@@ -132,31 +132,31 @@ class _PlayScreenState extends State<PlayScreen> {
                           children: [
                             PlayingCard(
                               suit: playState.room.board.isNotEmpty ? playState.room.board[0].suit : Suit.carreaux,
-                              rank: playState.room.board.isNotEmpty ? playState.room.board[0].rank : "Hack cc",
+                              rank: playState.room.board.isNotEmpty ? playState.room.board[0].rank : "No info",
                               display: _display && playState.room.board.isNotEmpty,
                               isSet: _set.isNotEmpty ? _set[0] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 2 ? playState.room.board[1].suit : Suit.carreaux,
-                              rank: playState.room.board.length >= 2 ? playState.room.board[1].rank : "Hack cc",
+                              rank: playState.room.board.length >= 2 ? playState.room.board[1].rank : "No info",
                               display: _display && playState.room.board.length >= 2,
                               isSet: _set.isNotEmpty ? _set[1] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 3 ? playState.room.board[2].suit : Suit.carreaux,
-                              rank: playState.room.board.length >= 3 ? playState.room.board[2].rank : "Hack cc",
+                              rank: playState.room.board.length >= 3 ? playState.room.board[2].rank : "No info",
                               display: _display && playState.room.board.length >= 3,
                               isSet: _set.isNotEmpty ? _set[2] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 4 ? playState.room.board[3].suit : Suit.carreaux,
-                              rank: playState.room.board.length >= 4 ? playState.room.board[3].rank : "Hack cc",
+                              rank: playState.room.board.length >= 4 ? playState.room.board[3].rank : "No info",
                               display: _display && playState.room.board.length >= 4,
                               isSet: _set.isNotEmpty ? _set[3] : false,
                             ),
                             PlayingCard(
                               suit: playState.room.board.length >= 5 ? playState.room.board[4].suit : Suit.carreaux,
-                              rank: playState.room.board.length >= 5 ? playState.room.board[4].rank : "Hack cc",
+                              rank: playState.room.board.length >= 5 ? playState.room.board[4].rank : "No info",
                               display: _display && playState.room.board.length >= 5,
                               isSet: _set.isNotEmpty ? _set[4] : false,
                             ),
