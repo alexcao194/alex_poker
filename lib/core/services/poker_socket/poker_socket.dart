@@ -100,6 +100,7 @@ class PokerSocket {
   final StreamController<PokerMessage> _streamController = StreamController<PokerMessage>.broadcast();
 
   void connect(String ip, String token) {
+    print(ip);
     _socket = sk.io('https://$ip/',
         sk.OptionBuilder()
             .setTransports(['websocket'])

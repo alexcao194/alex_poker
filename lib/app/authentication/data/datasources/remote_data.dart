@@ -23,7 +23,7 @@ class RemoteDataImpl extends RemoteData {
           "email" : account.email,
           "password" : account.password
         })
-    ).timeout(const Duration(milliseconds: 3000),
+    ).timeout(const Duration(milliseconds: 10000),
         onTimeout: () {
           throw DioError(requestOptions: RequestOptions(path: 'get'), error: 'network error, path : $ip');
         }
@@ -47,7 +47,7 @@ class RemoteDataImpl extends RemoteData {
           "password" : account.password,
           "email" : account.email,
         })
-    ).timeout(const Duration(milliseconds: 3000),
+    ).timeout(const Duration(milliseconds: 10000),
       onTimeout: () {
         throw DioError(requestOptions: RequestOptions(path: 'post-api/users'), error: 'network error, path : $ip');
       }

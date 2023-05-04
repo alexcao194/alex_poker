@@ -17,7 +17,8 @@ class RepositoriesImpl extends Repositories {
     try {
       return Right(await remoteData.getProfile(token: coreCacheData.getToken() ?? "", ip: coreCacheData.getIP4()));
     } on DioError catch(e) {
-      return Left(Failure(message: ' '.join(e.error.toString().split(RegExp(r'[-]'))).caption()));
+      print(e);
+      return Left(Failure(message: ' '.join(e.error.toString().split(RegExp(r'-'))).caption()));
     }
   }
 }

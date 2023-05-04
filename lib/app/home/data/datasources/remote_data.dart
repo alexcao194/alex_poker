@@ -21,7 +21,7 @@ class RemoteDataImpl extends RemoteData {
             'x-auth-token' : token
           }
         ),
-    ).timeout(const Duration(milliseconds: 3000),
+    ).timeout(const Duration(milliseconds: 10000),
         onTimeout: () {
           throw DioError(requestOptions: RequestOptions(path: 'get-api/auth'), error: 'network error, path : $ip');
         }
