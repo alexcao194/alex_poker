@@ -31,7 +31,6 @@ class RealtimeDataImpl extends RealtimeData {
     if(streamFromSocket == null) {
       streamFromSocket = pokerSocket.stream;
       streamFromSocket!.listen((event) {
-        print(event.data);
         var action = event.pokerAction;
         switch (action) {
           case PokerAction.connected:
@@ -115,6 +114,7 @@ class RealtimeDataImpl extends RealtimeData {
           case PokerAction.roomUpdated:
             var data = event.data['table'];
             data['message'] = event.data['message'];
+            print(data);
             streamController.sink.add(
               PokerMessage(
                   pokerAction: PokerAction.roomUpdated,

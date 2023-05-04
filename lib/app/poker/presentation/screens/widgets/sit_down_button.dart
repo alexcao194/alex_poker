@@ -43,7 +43,7 @@ class SitDownButton extends StatelessWidget {
                   builder: (context) {
                     return PickAmountDiaLog(
                         maxAmount: min(room.limit, user.chipAmount),
-                        minAmount: room.limit ~/ 10,
+                        minAmount: min(room.limit ~/ 10, user.chipAmount),
                         initType: InitType.max,
                         action: (amount) {
                           BlocProvider.of<PlayBloc>(context).add(PlayEventSitDown(amount: amount, seatId: seatId, roomId: room.id));

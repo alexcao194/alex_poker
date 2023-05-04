@@ -28,7 +28,6 @@ class RepositoriesImpl extends Repositories {
         coreCacheData.cacheToken(token);
       }
     } on DioError catch (e) {
-      print(e);
       return Failure(message: ' '.join(e.error.toString().split(RegExp(r'[-]'))).caption());
     }
     return null;
