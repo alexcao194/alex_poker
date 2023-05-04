@@ -67,7 +67,7 @@ class RoomModel extends Room {
       name : json['name'],
       limit : json['limit'],
       maxPlayers : json['maxPlayers'],
-      currentNumberPlayers : json['currentNumberPlayers'],
+      currentNumberPlayers : json['currentNumberPlayers'] ?? 0,
       smallBlind : json['smallBlind'],
       bigBlind : json['bigBlind'],
       type : json['type'],

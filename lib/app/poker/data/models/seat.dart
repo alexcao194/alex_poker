@@ -20,8 +20,7 @@ class SeatModel extends Seat {
   });
 
   factory SeatModel.fromJson(Map<String, dynamic> json) {
-    print(json);
-    var handData = json['hand'];
+    var handData = json['hand'] ?? [];
     var hand = <Card>[];
     for(var cardData in handData) {
       hand.add(CardModel.fromJson(cardData));
